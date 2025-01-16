@@ -1,6 +1,6 @@
 # SpaceSync
 
-SpaceSync is a room reservation and scheduling app
+SpaceSync is a room reservation and scheduling app.
 
 ## Set up
 
@@ -38,3 +38,10 @@ DB_PASSWORD=<your_mysql_server_password>
 
 1. Move into the `api` directory: `cd api`
 2. Run `node app.js`. You should get a message saying that the app started on a certain port and is connected to the MySQL database.
+
+### Start the front-end
+
+This is an instruction for running the React front-end in developer mode.
+
+1. Move into the project root directory (if you're in the `api` directory): `cd ..`
+2. Run the command `npm run dev`
