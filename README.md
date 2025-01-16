@@ -4,7 +4,7 @@ SpaceSync is a room reservation and scheduling app
 
 ## Set up
 
-### Prerequesites
+### Prerequisites
 
 - You must have [Node](https://nodejs.org/en) and [MySQL Community Server](https://dev.mysql.com/downloads/) installed.
 - The MySQL database must be set up with the username `root` and your chosen password (which you'll need in later steps).
