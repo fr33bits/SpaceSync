@@ -1,14 +1,35 @@
 import axios, { AxiosResponse } from 'axios'
 
-interface Reservation {
+export interface Reservation {
+    id?: number,
     title: string,
-    start: string,
-    end: string
+    start: number,
+    end: number,
+    created_at?: number,
+    last_modified_at?: number
 }
 
 interface ApiResponse {
     message: string,
     id?: number
+}
+
+export const getReservations = async (): Promise<Reservation[]> => {
+    try {
+        const response: AxiosResponse<any> = await axios.get(
+            "http://localhost:4000" + "/api/reservations",
+        )
+        const data: Reservation[] = response.data
+        // console.log("Fetched reservations: ", data)
+        return data
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            console.log("Axios error: ", error.response?.data || error.message)
+        } else {
+            console.error("Unexpected error: ", error)
+        }
+        throw error
+    }
 }
 
 export const createReservation = async (reservation: Reservation): Promise<void> => {

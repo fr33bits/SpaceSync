@@ -1,4 +1,5 @@
 import { ReservationForm } from './components/ReservationForm'
+import { ReservationTable } from './components/ReservationTable'
 
 import './App.css'
 
@@ -8,6 +9,7 @@ function App() {
     <>
        <div>
         <div>
+          <ReservationTable/>
           <ReservationForm/>
         </div>
        </div>

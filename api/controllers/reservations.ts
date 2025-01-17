@@ -13,7 +13,7 @@ const reservations = (req: express.Request, res: express.Response) => {
 };
 
 const reservation = (req: Request, res: Response) => {
-    const { id } = req.body;
+    const { id } =  req.body;
     db.query('SELECT * FROM reservations WHERE id = ?', [id], (err, results) => {
         if (err) {
             console.error(err);
