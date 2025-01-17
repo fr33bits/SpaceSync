@@ -1,20 +1,35 @@
 import React, { useState, useRef, useEffect } from "react"
 import { getCurrentDatetime, convertToLocalTime, getFormattedDatetimeFromUNIX } from '../functions/datetime'
-import { createReservation, getReservation, Reservation as ReservationType, updateReservation, deleteReservation} from '../functions/reservations'
+import { createReservation, getReservation, Reservation as ReservationType, updateReservation, deleteReservation } from '../functions/reservations'
 
-interface ReservationProps {
-    selectedReservation: number | null,
-    setSelectedReservation: (reservation_id: number | null) => void
-}
+import { useView } from '../contexts/ViewContext.tsx'
 
-export const Reservation: React.FC<ReservationProps> = ({ selectedReservation, setSelectedReservation }) => {
+export const Reservation: React.FC = () => {
     const [startDatetime, setStartDatetime] = useState(convertToLocalTime(getCurrentDatetime()))
     const [endDatetime, setEndDatetime] = useState("")
     const [error, setError] = useState("")
     const titleRef = useRef<HTMLInputElement>(null)
+    const viewContext = useView()
+    const selectedReservation = viewContext?.selectedReservation
+    const setSelectedReservation = viewContext?.setSelectedReservation
+    const setSelectedView = viewContext?.setSelectedView
+    if (!setSelectedReservation) {
+        return <div>ERROR: setSelectedReservation is undefined!</div>
+    }
+    if (!setSelectedView) {
+        return <div>ERROR: setSelectedView is undefined!</div>
+    }
 
     useEffect(() => {
-        const fetchReservation =  async () => {
+        if (!selectedReservation) {
+            setStartDatetime(convertToLocalTime(getCurrentDatetime()))
+            setEndDatetime(convertToLocalTime(getCurrentDatetime()))
+            if (titleRef?.current?.value) {
+                titleRef.current.value = ""
+            }
+        }
+
+        const fetchReservation = async () => {
             try {
                 if (selectedReservation) {
                     const data: ReservationType = await getReservation(selectedReservation)
@@ -42,7 +57,7 @@ export const Reservation: React.FC<ReservationProps> = ({ selectedReservation, s
             if (selectedReservation) { // update existing reservation
                 updateReservation({
                     id: selectedReservation,
-                    title: titleRef.current.value,
+                    title: title,
                     start: Math.floor(new Date(startDatetime).getTime() / 1000),
                     end: Math.floor(new Date(endDatetime).getTime() / 1000)
                 })
@@ -50,10 +65,11 @@ export const Reservation: React.FC<ReservationProps> = ({ selectedReservation, s
                 const createdReservation: ReservationType = await createReservation({
                     title,
                     start: Math.floor(new Date(startDatetime).getTime() / 1000),
-                    end: Math.floor(new Date(startDatetime).getTime() / 1000),
+                    end: Math.floor(new Date(endDatetime).getTime() / 1000),
                 })
                 if (createdReservation.id) {
                     setSelectedReservation(createdReservation.id)
+                    setSelectedView('reservation-existing')
                 }
             }
         }
@@ -62,7 +78,7 @@ export const Reservation: React.FC<ReservationProps> = ({ selectedReservation, s
     const handleDelete = () => {
         if (selectedReservation) {
             deleteReservation(selectedReservation)
-            setSelectedReservation(null)
+            setSelectedReservation(undefined)
         }
     }
 
@@ -77,7 +93,7 @@ export const Reservation: React.FC<ReservationProps> = ({ selectedReservation, s
 
     return (
         <div>
-            <button onClick={() => setSelectedReservation(null)}>Back to the table of reservations</button>
+            <button onClick={() => {setSelectedView('table'); setSelectedReservation(undefined)}}>Back to the table of reservations</button>
             <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="title">Title</label>
@@ -107,7 +123,7 @@ export const Reservation: React.FC<ReservationProps> = ({ selectedReservation, s
                     />
                 </div>
                 <div>
-                    <input type="submit" value={selectedReservation ? 'Update' : 'Create'}/>
+                    <input type="submit" value={selectedReservation ? 'Update' : 'Create'} />
                 </div>
             </form>
             {existingReservationButtons}

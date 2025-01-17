@@ -20,10 +20,12 @@ export const getFormattedDatetimeFromUNIX = (UNIX_timestamp: number, format: str
     const date = new Date(UNIX_timestamp * 1000)
     if (format === 'date_picker-input') {
         return convertToLocalTime(date.toISOString())
-    } else {
+    } else if (format == 'local') {
         const formattedDate = date.toLocaleDateString("sl-SI")
         const formattedTime = date.toLocaleTimeString("sl-SI")
         return `${formattedDate} ${formattedTime}`
+    } else {
+        return "Format not specified!"
     }
 }
 

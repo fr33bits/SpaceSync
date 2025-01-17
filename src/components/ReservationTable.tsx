@@ -3,14 +3,22 @@ import { getFormattedDatetimeFromUNIX } from "../functions/datetime"
 import { getReservations, Reservation } from "../functions/reservations"
 import '../styles/ReservationTable.css'
 
-interface ReservationTableProps {
-    setSelectedReservation: (reservation_id: number | null) => void
-}
+import { useView } from "../contexts/ViewContext"
 
-export const ReservationTable: React.FC<ReservationTableProps> = ({setSelectedReservation}) => {
+export const ReservationTable: React.FC = () => {
     const [reservations, setReservations]: any = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null);
+
+    const viewContext = useView()
+    const setSelectedReservation = viewContext?.setSelectedReservation
+    const setSelectedView = viewContext?.setSelectedView
+    if (!setSelectedReservation) {
+        return <div>ERROR: setSelectedReservation is undefined!</div>
+    }
+    if (!setSelectedView) {
+        return <div>ERROR: setSelectedView is undefined!</div>
+    }
 
     useEffect(() => {
         const fetchReservations = async () => {
@@ -51,7 +59,7 @@ export const ReservationTable: React.FC<ReservationTableProps> = ({setSelectedRe
                 </thead>
                 <tbody>
                     {reservations?.map((reservation: Reservation) => (
-                        <tr key={reservation.id} onClick={() => {setSelectedReservation(reservation.id)}}>
+                        <tr key={reservation.id} onClick={() => {setSelectedView('reservation-existing'); setSelectedReservation(reservation.id)}}>
                             <th scope="row">
                                 {reservation.id}
                             </th>
@@ -59,10 +67,10 @@ export const ReservationTable: React.FC<ReservationTableProps> = ({setSelectedRe
                                 {reservation.title}
                             </th>
                             <td>
-                                {getFormattedDatetimeFromUNIX(reservation.start)}
+                                {getFormattedDatetimeFromUNIX(reservation.start, 'local')}
                             </td>
                             <td>
-                                {getFormattedDatetimeFromUNIX(reservation.end)}
+                                {getFormattedDatetimeFromUNIX(reservation.end, 'local')}
                             </td>
                         </tr>
                     ))}
