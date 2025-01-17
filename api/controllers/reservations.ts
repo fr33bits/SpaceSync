@@ -12,8 +12,8 @@ const reservations = (req: express.Request, res: express.Response) => {
     });
 };
 
-const reservation = (req: Request, res: Response) => {
-    const { id } =  req.body;
+const reservation = (req: express.Request, res: express.Response) => {
+    const { id } =  req.params;
     db.query('SELECT * FROM reservations WHERE id = ?', [id], (err, results) => {
         if (err) {
             console.error(err);
@@ -24,7 +24,7 @@ const reservation = (req: Request, res: Response) => {
     });
 };
 
-const newReservation = (req: Request, res: Response) => {
+const newReservation = (req: express.Request, res: express.Response) => {
     const { title, start, end } = req.body;
     db.query(
         'INSERT INTO reservations (title, start, end, created_at, last_modified_at) VALUES (?, ?, ?, UNIX_TIMESTAMP(), NULL)',
@@ -43,7 +43,7 @@ const newReservation = (req: Request, res: Response) => {
     );
 };
 
-const updateReservation = (req: Request, res: Response) => {
+const updateReservation = (req: express.Request, res: express.Response) => {
     const { title, start, end, id } = req.body;
     db.query(
         'UPDATE reservations SET (title, start, end, modified_at) VALUES (?, ?, ?, UNIX_TIMESTAMP()) WHERE id = ?',
@@ -62,7 +62,7 @@ const updateReservation = (req: Request, res: Response) => {
     );
 };
 
-const deleteReservation = (req: Request, res: Response) => {
+const deleteReservation = (req: express.Request, res: express.Response) => {
     const { id } = req.params;
     db.query('DELETE FROM reservations WHERE id = ?', [id], (err, result) => {
         if (err) {

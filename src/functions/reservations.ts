@@ -32,6 +32,24 @@ export const getReservations = async (): Promise<Reservation[]> => {
     }
 }
 
+export const getReservation = async (reservation_id: number): Promise<Reservation> => {
+    try {
+        const response: AxiosResponse<any> = await axios.get(
+            "http://localhost:4000" + `/api/reservations/${reservation_id}`,
+        )
+        const data: Reservation = response.data[0]
+        console.log("Fetched reservation: ", data)
+        return data
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            console.log("Axios error: ", error.response?.data || error.message)
+        } else {
+            console.error("Unexpected error: ", error)
+        }
+        throw error
+    }
+}
+
 export const createReservation = async (reservation: Reservation): Promise<void> => {
     try {
         const response: AxiosResponse<ApiResponse> = await axios.post(

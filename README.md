@@ -6,7 +6,7 @@ SpaceSync is a room reservation and scheduling app.
 
 ### Prerequisites
 
-- You must have [Node](https://nodejs.org/en) installed, preferably version 23.6 (in order to be able to run typescript code natively without having to use the `--experimental-strip-types` option)
+- You must have [Node](https://nodejs.org/en) installed, **preferably version 23.6 (in order to be able to run typescript code natively without having to use the `--experimental-strip-types` option)**
 - You must have [MySQL Community Server](https://dev.mysql.com/downloads/) installed.
 - The MySQL database must be set up with the username `root` and your chosen password (which you'll need in later steps).
 - You can verify your MySQL installation using the command `mysql --version`.
@@ -42,7 +42,7 @@ CREATE TABLE reservations (
 INSERT INTO reservations (title, start, end, created_at, last_modified_at)
 VALUES
   ('Planiranje strežniške arhitekture', 1737100800, 1737103500, 1737101524, NULL),
-  ('Predstavitev finančnega poročila za prejšnji kvaratal', 1737103500, 1737105300, 1737099059, 1737101512),
+  ('Predstavitev finančnega poročila za prejšnji kvartal', 1737103500, 1737105300, 1737099059, 1737101512),
   ('Marketinški brainstorming', 1737112500, 1737114600, 1737108870, NULL);
 ```
 

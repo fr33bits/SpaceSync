@@ -1,0 +1,19 @@
+#root {
+  color: white;
+  width: 100%;
+}
+
+.app-viewport {
+  height: 100vh;
+  width: 100%;
+  background-color: rgb(75, 74, 74);
+}
+
+.app-header {
+  font-size: 50px;
+  text-align: center;
+}
+
+.app-body {
+  margin: 40px;
+}

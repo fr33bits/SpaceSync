@@ -16,9 +16,14 @@ export const convertToLocalTime = (isoString: string) => {
     return `${year}-${month}-${day}T${hours}:${minutes}`; // 'YYYY-MM-DDTHH:mm' format
 }
 
-export const getFormattedDatetimeFromUNIX = (UNIX_timestamp: number): string => {
+export const getFormattedDatetimeFromUNIX = (UNIX_timestamp: number, format: string): string => {
     const date = new Date(UNIX_timestamp * 1000)
-    const formattedDate = date.toLocaleDateString("sl-SI")
-    const formattedTime = date.toLocaleTimeString("sl-SI")
-    return `${formattedDate} ${formattedTime}`
+    if (format === 'date_picker-input') {
+        return date.toISOString().slice(0, 16)
+    } else {
+        const formattedDate = date.toLocaleDateString("sl-SI")
+        const formattedTime = date.toLocaleTimeString("sl-SI")
+        return `${formattedDate} ${formattedTime}`
+    }
 }
+
