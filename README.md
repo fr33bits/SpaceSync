@@ -2,7 +2,7 @@
 
 SpaceSync is a room reservation and scheduling app.
 
-## Set up
+## Set-up
 
 ### Prerequisites
 
@@ -14,8 +14,38 @@ SpaceSync is a room reservation and scheduling app.
 ### Preparing the app
 
 1. Clone this repository into your current chosen directory: `git clone https://github.com/fr33bits/SpaceSync.git`
-2. Moved into the cloned directory: `cd SpaceSync`
+2. Move into the cloned directory: `cd SpaceSync`
 3. Install the necessary packages using npm: `npm install`
+
+### Setting up the database
+
+1. In the CLI, first enter the MySQL server using the command `mysql -u root -p` and then, when prompted, enter the server password.
+2. Create a new database for this project: `CREATE DATABASE spacesync_db`
+3. Enter the database: `USE spacesync_db`
+4. Create a new table with the following schema:
+
+```sql
+CREATE TABLE reservations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(300) NOT NULL,
+    start BIGINT NOT NULL, -- UNIX timestamp
+    end BIGINT NOT NULL, -- UNIX timestamp
+    created_at BIGINT NOT NULL,-- UNIX timestamp
+    last_modified_at BIGINT -- UNIX timestamp, NULL if not modified since creation
+)
+```
+
+5. Optionally, you can also insert test data (or create it yourself later in the app):
+
+```sql
+INSERT INTO reservations (title, start, end)
+VALUES
+  ('John Doe', '2025-01-15', '19:00:00', 4),
+  ('Jane Smith', '2025-01-16', '20:00:00', 2),
+  ('Alice Johnson', '2025-01-17', '18:30:00', 3);
+```
+
+Alternatively, you can create the same database in MySQL Workbench.
 
 ### Setting the envionment variables
 
@@ -41,7 +71,12 @@ DB_PASSWORD=<your_mysql_server_password>
 
 ### Start the front-end
 
-This is an instruction for running the React front-end in developer mode.
+These are instructions for running the React front-end in developer mode.
 
 1. Move into the project root directory (if you're in the `api` directory): `cd ..`
 2. Run the command `npm run dev`
+
+## Implementation notes
+
+- The title has a maximum character length of 300 and is enforced both on the client and with the database schema.
+- The title cannot be empty and that is enforced both on the side of the client and the API server
