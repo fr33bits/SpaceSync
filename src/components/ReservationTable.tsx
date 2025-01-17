@@ -4,20 +4,24 @@ import { getReservations, Reservation } from "../functions/reservations"
 import '../styles/ReservationTable.css'
 
 import { useView } from "../contexts/ViewContext"
+import { useReservation } from "../contexts/ReservationContext"
 
 export const ReservationTable: React.FC = () => {
-    const [reservations, setReservations]: any = useState([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(null);
+    // COMPONENT STATES
+    const [reservations, setReservations] = useState<Reservation[]>([])
+    const [loading, setLoading] = useState<boolean>(true)
+    const [error, setError] = useState<string | null>(null);
 
+    // CONTEXT STATES
     const viewContext = useView()
-    const setSelectedReservation = viewContext?.setSelectedReservation
     const setSelectedView = viewContext?.setSelectedView
-    if (!setSelectedReservation) {
-        return <div>ERROR: setSelectedReservation is undefined!</div>
-    }
+    const reservationContext = useReservation()
+    const setSelectedReservation = reservationContext?.setSelectedReservation
     if (!setSelectedView) {
-        return <div>ERROR: setSelectedView is undefined!</div>
+        throw new Error("setSelectedView is undefined")
+    }
+    if (!setSelectedReservation) {
+        throw new Error("setSelectedView is undefined")
     }
 
     useEffect(() => {
@@ -34,48 +38,50 @@ export const ReservationTable: React.FC = () => {
         fetchReservations()
     }, [])
 
+
+    if (error) {
+        return (
+            <div>
+                ERROR: {error}
+            </div>
+        )
+    }
     if (loading) {
         return (
             <div>
                 Loading...
             </div>
         )
-    } else if (error) {
-        return (
-            <div>
-                Error: {error}
-            </div>
-        )
-    } else {
-        return (
-            <table className="table table-hover table-dark">
-                <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Title</th>
-                        <th scope="col">Start</th>
-                        <th scope="col">End</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {reservations?.map((reservation: Reservation) => (
-                        <tr key={reservation.id} onClick={() => {setSelectedView('reservation-existing'); setSelectedReservation(reservation.id)}}>
-                            <th scope="row">
-                                {reservation.id}
-                            </th>
-                            <th scope="row">
-                                {reservation.title}
-                            </th>
-                            <td>
-                                {getFormattedDatetimeFromUNIX(reservation.start, 'local')}
-                            </td>
-                            <td>
-                                {getFormattedDatetimeFromUNIX(reservation.end, 'local')}
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        )
     }
+
+    return (
+        <table className="table table-hover table-dark">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Start</th>
+                    <th scope="col">End</th>
+                </tr>
+            </thead>
+            <tbody>
+                {reservations?.map((reservation: Reservation) => (
+                    <tr key={reservation.id} onClick={() => { setSelectedReservation(reservation.id); setSelectedView('reservation-existing') }}>
+                        <th scope="row">
+                            {reservation.id}
+                        </th>
+                        <th scope="row">
+                            {reservation.title}
+                        </th>
+                        <td>
+                            {getFormattedDatetimeFromUNIX(reservation.start, 'local')}
+                        </td>
+                        <td>
+                            {getFormattedDatetimeFromUNIX(reservation.end, 'local')}
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    )
 }
