@@ -21,7 +21,7 @@ db.connect(err => {
 })
 
 // SERVER
-import indexApi from './routes/index.js' // API router
+import indexApi from './routes/index.ts' // API router
 
 const app = express()
 const PORT = process.env.PORT || 4000

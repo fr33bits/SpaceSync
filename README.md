@@ -6,7 +6,8 @@ SpaceSync is a room reservation and scheduling app.
 
 ### Prerequisites
 
-- You must have [Node](https://nodejs.org/en) and [MySQL Community Server](https://dev.mysql.com/downloads/) installed.
+- You must have [Node](https://nodejs.org/en) installed, preferably version 23.6 (in order to be able to run typescript code natively without having to use the `--experimental-strip-types` option)
+- You must have [MySQL Community Server](https://dev.mysql.com/downloads/) installed.
 - The MySQL database must be set up with the username `root` and your chosen password (which you'll need in later steps).
 - You can verify your MySQL installation using the command `mysql --version`.
 - If the `mysql` command is not recognized, you may have to add it to your `PATH` variable.
@@ -66,8 +67,9 @@ DB_PASSWORD=<your_mysql_server_password>
 
 ### Run the server
 
+1. Make sure you have ts-node installed globally: `npm install -g ts-node`
 1. Move into the `api` directory: `cd api`
-2. Run `node app.js`. You should get a message saying that the app started on a certain port and is connected to the MySQL database.
+2. Run `node app.ts`. You should get a message saying that the app started on a certain port and is connected to the MySQL database.
 
 ### Start the front-end
 

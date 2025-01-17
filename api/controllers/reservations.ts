@@ -1,7 +1,7 @@
-import { db } from '../app.js'
-import { Request, Response } from 'express'
+import { db } from '../app.ts'
+import express from 'express'
 
-const reservations = (req: Request, res: Response) => {
+const reservations = (req: express.Request, res: express.Response) => {
     db.query('SELECT * FROM reservations', (err, results) => {
         if (err) {
             console.error(err);

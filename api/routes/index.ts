@@ -1,7 +1,7 @@
 import express from 'express'
 const router = express.Router()
 
-import ctrlReservations from '../controllers/reservations.js'
+import ctrlReservations from '../controllers/reservations.ts'
 
 router.get('/reservations', ctrlReservations.reservations)
 router.get('/reservations/:id', ctrlReservations.reservation)
