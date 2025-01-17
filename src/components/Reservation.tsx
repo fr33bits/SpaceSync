@@ -42,39 +42,50 @@ export const Reservation: React.FC = () => {
     }, [startDatetime, endDatetime])
 
     return (
-        <div>
-            <form>
-                <div>
-                    <label htmlFor="title">Title</label>
-                    <input type="text" id="title" name="title" minLength={1} maxLength={300} value={title} onChange={(e) => setTitle(e.target.value)} />
+        <div className="reservation">
+            <div className="reservation-form">
+                <div className="reservation-form-title">
+                    <label htmlFor="title">Title</label><br />
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        minLength={1}
+                        maxLength={300}
+                        value={title} onChange={(e) => setTitle(e.target.value)}
+                    />
                 </div>
+                <br/>
+                <div>
+                    <div className="reservation-form-duration-item">
+                        <label htmlFor="datetime-start">Start date and time</label><br/>
+                        <input
+                            type="datetime-local"
+                            id="datetime-start"
+                            name="datetime-start"
+                            value={startDatetime}
+                            onChange={(e) => { setStartDatetime(e.target.value) }}
+                        />
+                    </div>
+                    <div className="reservation-form-duration-item">
+                        <label htmlFor="datetime-end">End date and time</label><br />
+                        <input
+                            type="datetime-local"
+                            id="datetime-start"
+                            name="datetime-start"
+                            value={endDatetime}
+                            onChange={(e) => setEndDatetime(e.target.value)}
+                        />
+                    </div>
+                    {duration ?
+                        <div className="reservation-form-duration-item">
+                            Duration: {duration}
+                        </div> : null
+                    }
+                </div>
+                <br/>
                 <p>Please note that the date and time selected are in your local time (as reported by the browser) however they are saved into the database with the timezone data in order to ensure consistency between timezones</p>
-                <div>
-                    <label htmlFor="datetime-start">Start date and time</label>
-                    <input
-                        type="datetime-local"
-                        id="datetime-start"
-                        name="datetime-start"
-                        value={startDatetime}
-                        onChange={(e) => { setStartDatetime(e.target.value) }}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="datetime-end">End date and time</label>
-                    <input
-                        type="datetime-local"
-                        id="datetime-start"
-                        name="datetime-start"
-                        value={endDatetime}
-                        onChange={(e) => setEndDatetime(e.target.value)}
-                    />
-                </div>
-                {duration ?
-                    <div>
-                        Duration: {duration}
-                    </div> : null
-                }
-            </form>
+            </div>
             {reservationError ?
                 <div className="error">
                     <span className="error-icon material-symbols-outlined">

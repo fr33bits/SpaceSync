@@ -1,5 +1,20 @@
+.reservation {
+    padding: 15px;
+    background-color: #2a2a2a;
+    border-radius: 20px;
+}
+
+.reservation-form {
+    padding: 15px;
+}
+
+.reservation-form-duration-item {
+    display: inline-block;
+    margin-right: 15px;
+}
+
 .error {
-    margin: 15px;
+    margin-top: 15px;
     padding: 10px;
 
     background-color: rgba(255, 0, 0, 0.316);
@@ -13,4 +28,27 @@
 
 .error-icon {
     margin-right: 10px;
+}
+
+label, p {
+    user-select: none;
+}
+
+p {
+    margin-bottom: 0px !important
+}
+
+input {
+    color: white;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: #5a5a5a;
+}
+
+input:focus {
+    background-color: #8a8a8a;
+}
+
+.reservation-form-title input {
+    width: 100%;
 }
