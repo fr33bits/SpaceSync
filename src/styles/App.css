@@ -1,19 +1,35 @@
-#root {
-  color: white;
-  width: 100%;
-}
-
-.app-viewport {
+.viewport {
   height: 100vh;
   width: 100%;
   background-color: rgb(75, 74, 74);
 }
 
-.app-header {
-  font-size: 50px;
+.header {
+  padding-top: 15px;
+  height: 100px;
   text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.app-body {
+.header-logo {
+  display: inline-block;
+  height: 100px;
+  margin-right: 15px;
+}
+
+.header-logo img {
+  height: 100%;
+  /* to turn the logo from black to white */
+  filter: invert(1) brightness(2);
+}
+
+.header-name {
+  font-size: 50px;
+  display: inline-block;
+}
+
+.main-view {
   margin: 40px;
 }

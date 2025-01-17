@@ -1,8 +1,8 @@
-import { Reservation } from './components/Reservation'
-import { ReservationTable } from './components/ReservationTable'
+import { Reservation } from './Reservation.tsx'
+import { ReservationTable } from './ReservationTable.tsx'
 
-import './styles/App.css'
-import { useView } from './contexts/ViewContext.tsx'
+import '../styles/App.css'
+import { useView } from '../contexts/ViewContext.tsx'
 
 function App() {
   const viewContext = useView()
@@ -18,22 +18,27 @@ function App() {
 
   let view
   if (selectedView === 'reservation-existing' || selectedView === 'reservation-new') {
-    view = <Reservation/>
+    view = <Reservation />
   } else {
-    view = <ReservationTable/>
+    view = <ReservationTable />
   }
   return (
-    <>
-       <div className="app-viewport">
-        <div className="app-header">SpaceSync</div>
-        <div className="app-body">
-        <button onClick={() => {setSelectedView('reservation-new'); setSelectedReservation(undefined)}} >
+    <div className="viewport">
+      <div className="header">
+        <div className="header-logo">
+          <img src="/src/assets/logo.png" alt="" />
+        </div>
+        <div className='header-name michroma-regular'>
+          SpaceSync
+        </div>
+      </div>
+      <div className="main-view">
+        <button onClick={() => { setSelectedView('reservation-new'); setSelectedReservation(undefined) }} >
           New reservation
         </button>
-          {view}
-        </div>
-       </div>
-    </>
+        {view}
+      </div>
+    </div>
   )
 }
 
