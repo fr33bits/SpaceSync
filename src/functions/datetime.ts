@@ -32,3 +32,13 @@ export const getFormattedDatetimeFromUNIX = (UNIX_timestamp: number, format: str
 export const durationFromFormatted = (start: string, end: string) : number => { // in seconds
     return Math.floor(new Date(end).getTime() / 1000) - Math.floor(new Date(start).getTime() / 1000)
 }
+
+export const durationHHMM = (duration: number): string => { // in seconds
+    const hours = Math.floor(duration / 3600).toString().padStart(2, '0');
+    const minutes = Math.floor((duration % 3600) / 60).toString().padStart(2, '0');
+    if (Math.floor(duration / 3600) >= 0 && Math.floor(duration / 3600) < 100 && Math.floor((duration % 3600) / 60) >= 0) {
+        return `${hours}:${minutes}`;
+    } else {
+        return ""
+    }
+};

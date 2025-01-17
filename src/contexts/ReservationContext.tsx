@@ -36,7 +36,17 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const [fetchedReservation, setFetchedReservation] = useState<ReservationType | undefined>(undefined)
     const [title, setTitle] = useState<string>("")
     const [startDatetime, setStartDatetime] = useState<string>(convertToLocalTime(getCurrentDatetime()))
-    const [endDatetime, setEndDatetime] = useState<string>("")
+    const [endDatetime, setEndDatetime] = useState<string>(
+        convertToLocalTime(
+            getFormattedDatetimeFromUNIX(
+                Math.floor(new Date(
+                    convertToLocalTime(getCurrentDatetime())
+                ).getTime() / 1000)
+                + 1200, // default reservation duration: 20 min
+                'date_picker-input'
+            )
+        )
+    )
 
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState("")
@@ -57,8 +67,8 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
                 const fetchedData: ReservationType = await getReservation(selectedReservation)
                 setFetchedReservation(fetchedData)
                 setTitle(fetchedData.title)
-                const startDatetimeFormatted: string = getFormattedDatetimeFromUNIX(fetchedData.start, "date_picker-input")
-                const endDatetimeFormatted: string = getFormattedDatetimeFromUNIX(fetchedData.end, "date_picker-input")
+                const startDatetimeFormatted: string = getFormattedDatetimeFromUNIX(fetchedData.start, 'date_picker-input')
+                const endDatetimeFormatted: string = getFormattedDatetimeFromUNIX(fetchedData.end, 'date_picker-input')
                 setStartDatetime(startDatetimeFormatted)
                 setEndDatetime(endDatetimeFormatted)
             }
@@ -81,7 +91,17 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
         if (!selectedReservation) { // new reservation or no reservation selected
             setTitle("")
             setStartDatetime(convertToLocalTime(getCurrentDatetime()))
-            setEndDatetime(convertToLocalTime(getCurrentDatetime()))
+            setEndDatetime(
+                convertToLocalTime(
+                    getFormattedDatetimeFromUNIX(
+                        Math.floor(new Date(
+                            convertToLocalTime(getCurrentDatetime())
+                        ).getTime() / 1000)
+                        + 1200, // min. reservation duration: 5 min
+                        'date_picker-input'
+                    )
+                )
+            )
         }
 
         // existing reservation
@@ -95,8 +115,8 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
         if (fetchedReservation) {
             if (
                 title != fetchedReservation.title ||
-                startDatetime != getFormattedDatetimeFromUNIX(fetchedReservation.start, "date_picker-input") ||
-                endDatetime != getFormattedDatetimeFromUNIX(fetchedReservation.end, "date_picker-input")
+                startDatetime != getFormattedDatetimeFromUNIX(fetchedReservation.start, 'date_picker-input') ||
+                endDatetime != getFormattedDatetimeFromUNIX(fetchedReservation.end, 'date_picker-input')
 
             ) {
                 setChangedReservation(true)
@@ -112,8 +132,8 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const discardChanges = () => {
         if (fetchedReservation && changedReservation) {
             setTitle(fetchedReservation.title)
-            setStartDatetime(getFormattedDatetimeFromUNIX(fetchedReservation.start, "date_picker-input"))
-            setEndDatetime(getFormattedDatetimeFromUNIX(fetchedReservation.end, "date_picker-input"))
+            setStartDatetime(getFormattedDatetimeFromUNIX(fetchedReservation.start, 'date_picker-input'))
+            setEndDatetime(getFormattedDatetimeFromUNIX(fetchedReservation.end, 'date_picker-input'))
         } else {
             setError("Unknown error: code 287304")
         }

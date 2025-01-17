@@ -1,11 +1,14 @@
-import React from "react"
-import { getCurrentDatetime, convertToLocalTime } from '../functions/datetime'
+import React, { useEffect, useState } from "react"
+import { getCurrentDatetime, convertToLocalTime, getFormattedDatetimeFromUNIX, durationFromFormatted, durationHHMM } from '../functions/datetime'
 import { getErrorMessage } from '../functions/common.ts'
 
 import { useReservation } from "../contexts/ReservationContext.tsx"
 import '../styles/Reservation.css'
 
 export const Reservation: React.FC = () => {
+    // STATES
+    const [duration, setDuration] = useState<string>()
+
     // CONTEXT STATES
     const reservationContext = useReservation()
     const selectedReservation = reservationContext?.selectedReservation
@@ -31,6 +34,13 @@ export const Reservation: React.FC = () => {
         return (<div>Loading...</div>)
     }
 
+    useEffect(() => {
+        if (startDatetime && endDatetime) {
+            const durationSec: number = durationFromFormatted(startDatetime, endDatetime)
+            setDuration(durationHHMM(durationSec))
+        }
+    }, [startDatetime, endDatetime])
+
     return (
         <div>
             <form>
@@ -46,11 +56,7 @@ export const Reservation: React.FC = () => {
                         id="datetime-start"
                         name="datetime-start"
                         value={startDatetime}
-                        min={selectedReservation ? "" : convertToLocalTime(getCurrentDatetime())}
-                        onChange={(e) => {
-                            setStartDatetime(e.target.value)
-                            endDatetime && startDatetime && endDatetime < startDatetime ? setEndDatetime(e.target.value) : null // endDatetime && startDatetime needed to ensure they are not undefined
-                        }}
+                        onChange={(e) => { setStartDatetime(e.target.value) }}
                     />
                 </div>
                 <div>
@@ -60,16 +66,20 @@ export const Reservation: React.FC = () => {
                         id="datetime-start"
                         name="datetime-start"
                         value={endDatetime}
-                        min={startDatetime}
                         onChange={(e) => setEndDatetime(e.target.value)}
                     />
                 </div>
+                {duration ?
+                    <div>
+                        Duration: {duration}
+                    </div> : null
+                }
             </form>
             {reservationError ?
                 <div className="error">
                     <span className="error-icon material-symbols-outlined">
-error
-</span>
+                        error
+                    </span>
                     {getErrorMessage(reservationError, true, 'EN')}
                 </div> : null
             }
