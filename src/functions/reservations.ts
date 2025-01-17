@@ -94,17 +94,23 @@ export const updateReservation = async (reservation: Reservation): Promise<void 
     }
 }
 
-export const deleteReservation = async (reservation_id: number): Promise<void> => {
-    try {
-        const response: AxiosResponse<any> = await axios.delete(
-            "http://localhost:4000" + `/api/reservations/${reservation_id}`,
-        )
-    } catch (error) {
-        if (axios.isAxiosError(error)) {
-            console.log("Axios error: ", error.response?.data || error.message)
-        } else {
-            console.error("Unexpected error: ", error)
+export const deleteReservation = async (reservation_id: number): Promise<boolean> => {
+    const confirmation = window.confirm("Are you sure you want to delete this reservation?");
+    if (confirmation) {
+        try {
+            const response: AxiosResponse<any> = await axios.delete(
+                "http://localhost:4000" + `/api/reservations/${reservation_id}`,
+            )
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.log("Axios error: ", error.response?.data || error.message)
+            } else {
+                console.error("Unexpected error: ", error)
+            }
+            throw error
         }
-        throw error
+        return true
+    } else {
+        return false // needed to signal whether the deletion went through (which may or may not instigate view changes)
     }
 }

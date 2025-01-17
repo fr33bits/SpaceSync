@@ -156,13 +156,15 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
         }
     }
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (selectedReservation) {
-            deleteReservation(selectedReservation)
+            const result: boolean = await deleteReservation(selectedReservation)
 
-            // Update views
-            setSelectedReservation(undefined)
-            setSelectedView('table')
+            if (result) { // deletion went through
+                // Update views
+                setSelectedReservation(undefined)
+                setSelectedView('table')
+            }
         }
     }
 

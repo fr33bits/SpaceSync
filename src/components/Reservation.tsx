@@ -66,7 +66,7 @@ export const Reservation: React.FC = () => {
                 </div>
             </form>
             {reservationError ?
-                <div className="caption error">
+                <div className="error">
                     <span className="error-icon material-symbols-outlined">
 error
 </span>
