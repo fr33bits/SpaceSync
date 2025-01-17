@@ -10,7 +10,9 @@ export const Toolbar = () => {
     const setSelectedView = viewContext?.setSelectedView
     const reservationContext = useReservation()
     const setSelectedReservation = reservationContext?.setSelectedReservation
+    const changedReservation = reservationContext?.changedReservation
     const handleDelete = reservationContext?.handleDelete
+    const discardChanges = reservationContext?.discardChanges
     const handleSubmit = reservationContext?.handleSubmit
     if (!setSelectedView) {
         throw new Error("setSelectedView is undefined")
@@ -32,15 +34,28 @@ export const Toolbar = () => {
                         delete
                     </span>
                 </div>
-                <div
-                    className='toolbar-button'
-                    onClick={() => handleSubmit()}
-                    title='Update reservation'
-                >
-                    <span className="material-symbols-outlined">
-                        check
-                    </span>
-                </div>
+                {changedReservation ?
+                    <>
+                        <div
+                            className='toolbar-button'
+                            onClick={() => discardChanges()}
+                            title='Discard changes'
+                        >
+                            <span className="material-symbols-outlined">
+                                clear
+                            </span>
+                        </div>
+                        <div
+                            className='toolbar-button'
+                            onClick={() => handleSubmit()}
+                            title='Update reservation'
+                        >
+                            <span className="material-symbols-outlined">
+                                check
+                            </span>
+                        </div>
+                    </> : null
+                }
             </div>
         )
     } else if (selectedView === 'reservation-new') {
@@ -67,7 +82,7 @@ export const Toolbar = () => {
                     {selectedView != 'table' ?
                         <div
                             className='toolbar-button'
-                            onClick={() => { setSelectedView('table'); setSelectedReservation(undefined)}}
+                            onClick={() => { setSelectedView('table'); setSelectedReservation(undefined) }}
                             title='Go back to the table of reservations'
                         >
                             <span className="material-symbols-outlined">
@@ -78,7 +93,7 @@ export const Toolbar = () => {
                     {selectedView != 'reservation-new' ?
                         <div
                             className='toolbar-button'
-                            onClick={() => { setSelectedView('reservation-new'); setSelectedReservation(undefined)}}
+                            onClick={() => { setSelectedView('reservation-new'); setSelectedReservation(undefined) }}
                             title='New reservation'
                         >
                             <span className="material-symbols-outlined">
