@@ -34,7 +34,7 @@ const newReservation = async (req: express.Request, res: express.Response) => {
             errorCode: staticValidationResult,
             message: getErrorMessage(staticValidationResult, true, 'en')
         })
-    } else if (await isOccupied(undefined, start, end) != false) {
+    } else if (await isOccupied(undefined, start, end, undefined) != false) {
         res.status(409).json({ // 409 HTTP error code
             errorCode: 'time_period-occupied',
             message: getErrorMessage('time_period-occupied', true, 'en')
@@ -64,7 +64,7 @@ const updateReservation = async (req: express.Request, res: express.Response) =>
             errorCode: staticValidationResult,
             message: getErrorMessage(staticValidationResult, true, 'en')
         })
-    } else if (await isOccupied(undefined, start, end) != false) {
+    } else if (await isOccupied(undefined, start, end, id) != false) {
         res.status(409).json({ // 409 HTTP error code
             errorCode: 'time_period-occupied',
             message: getErrorMessage('time_period-occupied', true, 'en')
@@ -105,11 +105,20 @@ export default {
     deleteReservation
 }
 
-const isOccupied = async (room_id: number | void, start: number, end: number): Promise<boolean | string> => {
+const isOccupied = async (room_id: number | void, start: number, end: number, id: number | undefined): Promise<boolean | string> => {
+    let query: string
+    let queryArgs: any[]
+    if (id) {
+        query = 'SELECT * FROM reservations WHERE id <> ? AND NOT (end <= ? OR start >= ?)'
+        queryArgs =  [id, start, end]
+    } else {
+        query = 'SELECT * FROM reservations WHERE NOT (end <= ? OR start >= ?)'
+        queryArgs =  [start, end]
+    }
     return new Promise((resolve, reject) => {
         db.query(
-            'SELECT * FROM reservations WHERE NOT (end <= ? OR start >= ?)',
-            [start, end],
+            query,
+            queryArgs,
             (err, result) => {
                 if (err) {
                     console.error(err);
