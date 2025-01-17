@@ -23,7 +23,7 @@ export const getFormattedDatetimeFromUNIX = (UNIX_timestamp: number, format: str
     } else if (format == 'local') {
         const formattedDate = date.toLocaleDateString("sl-SI")
         const formattedTime = date.toLocaleTimeString("sl-SI")
-        return `${formattedDate} ${formattedTime}`
+        return `${formattedDate} ${formattedTime}`.slice(0, -3)
     } else {
         return "Format not specified!"
     }

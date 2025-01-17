@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { getFormattedDatetimeFromUNIX } from "../functions/datetime"
+import { durationHHMM, getFormattedDatetimeFromUNIX } from "../functions/datetime"
 import { getReservations, Reservation } from "../functions/reservations"
 import '../styles/ReservationTable.css'
 
@@ -62,6 +62,7 @@ export const ReservationTable: React.FC = () => {
                     <th scope="col">Title</th>
                     <th scope="col">Start</th>
                     <th scope="col">End</th>
+                    <th scope="col">Duration</th>
                 </tr>
             </thead>
             <tbody>
@@ -78,6 +79,9 @@ export const ReservationTable: React.FC = () => {
                         </td>
                         <td>
                             {getFormattedDatetimeFromUNIX(reservation.end, 'local')}
+                        </td>
+                        <td>
+                            {durationHHMM(reservation.end - reservation.start)}
                         </td>
                     </tr>
                 ))}
