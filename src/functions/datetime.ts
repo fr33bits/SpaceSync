@@ -19,7 +19,7 @@ export const convertToLocalTime = (isoString: string) => {
 export const getFormattedDatetimeFromUNIX = (UNIX_timestamp: number, format: string): string => {
     const date = new Date(UNIX_timestamp * 1000)
     if (format === 'date_picker-input') {
-        return date.toISOString().slice(0, 16)
+        return convertToLocalTime(date.toISOString())
     } else {
         const formattedDate = date.toLocaleDateString("sl-SI")
         const formattedTime = date.toLocaleTimeString("sl-SI")

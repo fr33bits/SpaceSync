@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react"
 import { getCurrentDatetime, convertToLocalTime, getFormattedDatetimeFromUNIX } from '../functions/datetime'
-import { createReservation, getReservation, Reservation as ReservationType} from '../functions/reservations'
+import { createReservation, getReservation, Reservation as ReservationType, updateReservation, deleteReservation} from '../functions/reservations'
 
 interface ReservationProps {
     selectedReservation: number | null,
@@ -31,20 +31,48 @@ export const Reservation: React.FC<ReservationProps> = ({ selectedReservation, s
             }
         }
         fetchReservation()
-    }, [])
+    }, [selectedReservation])
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault() // prevents the refresh of the page
 
         const title = titleRef?.current?.value
 
         if (title) {
-            createReservation({
-                title,
-                start: startDatetime,
-                end: endDatetime
-            })
+            if (selectedReservation) { // update existing reservation
+                updateReservation({
+                    id: selectedReservation,
+                    title: titleRef.current.value,
+                    start: Math.floor(new Date(startDatetime).getTime() / 1000),
+                    end: Math.floor(new Date(endDatetime).getTime() / 1000)
+                })
+            } else { // create new reservation
+                const createdReservation: ReservationType = await createReservation({
+                    title,
+                    start: Math.floor(new Date(startDatetime).getTime() / 1000),
+                    end: Math.floor(new Date(startDatetime).getTime() / 1000),
+                })
+                if (createdReservation.id) {
+                    setSelectedReservation(createdReservation.id)
+                }
+            }
         }
+    }
+
+    const handleDelete = () => {
+        if (selectedReservation) {
+            deleteReservation(selectedReservation)
+            setSelectedReservation(null)
+        }
+    }
+
+    let existingReservationButtons
+    if (selectedReservation) {
+        existingReservationButtons = (
+            <div className="">
+                <button onClick={handleDelete}>Delete reservation</button>
+            </div>
+        )
     }
 
     return (
@@ -63,7 +91,7 @@ export const Reservation: React.FC<ReservationProps> = ({ selectedReservation, s
                         id="datetime-start"
                         name="datetime-start"
                         value={startDatetime}
-                        min={convertToLocalTime(getCurrentDatetime())}
+                        min={selectedReservation ? "" : convertToLocalTime(getCurrentDatetime())}
                         onChange={(e) => setStartDatetime(e.target.value)}
                     />
                 </div>
@@ -79,12 +107,12 @@ export const Reservation: React.FC<ReservationProps> = ({ selectedReservation, s
                     />
                 </div>
                 <div>
-                    <input type="submit" />
-                </div>
-                <div className="caption error">
-
+                    <input type="submit" value={selectedReservation ? 'Update' : 'Create'}/>
                 </div>
             </form>
+            {existingReservationButtons}
+            <div className="caption error">
+            </div>
         </div>
     )
 }
