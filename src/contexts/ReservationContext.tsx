@@ -1,9 +1,10 @@
-import { getReservation, Reservation as ReservationType, createReservation, updateReservation, deleteReservation } from '../functions/reservations'
+import { getReservation, Reservation as ReservationType, ApiResponse, createReservation, updateReservation, deleteReservation } from '../functions/reservations'
 
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { getCurrentDatetime, convertToLocalTime, getFormattedDatetimeFromUNIX } from '../functions/datetime'
 
 import { useView } from '../contexts/ViewContext'
+import { reservationStaticValidator } from '../functions/common';
 
 interface ReservationContextType {
     selectedReservation: number | undefined;
@@ -74,7 +75,7 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
             setSelectedReservation(undefined)
         }
     }, [selectedReservation])
-    
+
     // populates (state) data
     useEffect(() => {
         if (!selectedReservation) { // new reservation or no reservation selected
@@ -87,14 +88,16 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
         fetchReservation()
     }, [selectedReservation])
 
-    // detects if changes have been made compared to the fetched data
+    // runs on every change in data
     useEffect(() => {
+        setError(reservationStaticValidator(title, startDatetime, endDatetime))
+
         if (fetchedReservation) {
             if (
                 title != fetchedReservation.title ||
                 startDatetime != getFormattedDatetimeFromUNIX(fetchedReservation.start, "date_picker-input") ||
                 endDatetime != getFormattedDatetimeFromUNIX(fetchedReservation.end, "date_picker-input")
-    
+
             ) {
                 setChangedReservation(true)
             } else {
@@ -112,50 +115,44 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
             setStartDatetime(getFormattedDatetimeFromUNIX(fetchedReservation.start, "date_picker-input"))
             setEndDatetime(getFormattedDatetimeFromUNIX(fetchedReservation.end, "date_picker-input"))
         } else {
-            setError("This should not have occured. Please report this bug.")
+            setError("Unknown error: code 287304")
         }
     }
 
     const handleSubmit = async () => {
         // e.preventDefault() // prevents the refresh of the page (used to be necessary when it was triggered with a submit button)
 
-        if (!title) {
-            setError('title-undefined')
-            return
-        }
-        if (!startDatetime) {
-            setError('startDatetime-undefined')
-            return
-        }
-        if (!endDatetime) {
-            setError('endDatetime-undefined')
-            return
-        }
-
-        if (title) {
+        try {
             if (selectedReservation) { // update existing reservation
-                updateReservation({
+                const response = await updateReservation({
                     id: selectedReservation,
                     title: title,
                     start: Math.floor(new Date(startDatetime).getTime() / 1000),
                     end: Math.floor(new Date(endDatetime).getTime() / 1000)
                 })
-
-                // TODO: should only run where updateReservation was sucessful 
-                fetchReservation()
+                fetchReservation() // would not run if updateReservation fails because that would get caught as an error
             } else { // create new reservation
-                const createdReservation: ReservationType = await createReservation({
+                const response: ReservationType | ApiResponse = await createReservation({
                     title,
                     start: Math.floor(new Date(startDatetime).getTime() / 1000),
                     end: Math.floor(new Date(endDatetime).getTime() / 1000),
                 })
-                if (createdReservation.id) {
-                    setSelectedReservation(createdReservation.id)
-                    setSelectedView('reservation-existing')
-                }
+
+                // ! alternative error handling implmentation with custom error response (chosen the other one because it's simpler):
+                // if ('errorCode' in response) { // checks if the response is an error
+                //     setError(response)
+                // }
+
+                setSelectedReservation(response.id)
+                setSelectedView('reservation-existing')
             }
-        } else {
-            setError("title-empty")
+        } catch (error) {
+            if (error instanceof Error) {
+                setError(error.message)
+            } else {
+                setError('An unknown (not Error) error occurred')
+                console.error(error)
+            }
         }
     }
 

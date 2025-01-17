@@ -14,6 +14,7 @@ export const Toolbar = () => {
     const handleDelete = reservationContext?.handleDelete
     const discardChanges = reservationContext?.discardChanges
     const handleSubmit = reservationContext?.handleSubmit
+    const reservationError = reservationContext?.error
     if (!setSelectedView) {
         throw new Error("setSelectedView is undefined")
     }
@@ -34,7 +35,7 @@ export const Toolbar = () => {
                         delete
                     </span>
                 </div>
-                {changedReservation ?
+                {changedReservation && !reservationError ?
                     <>
                         <div
                             className='toolbar-button'
@@ -86,7 +87,7 @@ export const Toolbar = () => {
                             title='Go back to the table of reservations'
                         >
                             <span className="material-symbols-outlined">
-                                arrow_back
+                                table_rows
                             </span>
                         </div> : null
                     }

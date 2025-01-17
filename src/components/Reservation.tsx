@@ -1,7 +1,9 @@
 import React from "react"
 import { getCurrentDatetime, convertToLocalTime } from '../functions/datetime'
+import { getErrorMessage } from '../functions/common.ts'
 
 import { useReservation } from "../contexts/ReservationContext.tsx"
+import '../styles/Reservation.css'
 
 export const Reservation: React.FC = () => {
     // CONTEXT STATES
@@ -34,7 +36,7 @@ export const Reservation: React.FC = () => {
             <form>
                 <div>
                     <label htmlFor="title">Title</label>
-                    <input type="text" id="title" name="title" minLength={1} maxLength={300} value={title} onChange={(e) => setTitle(e.target.value)}/>
+                    <input type="text" id="title" name="title" minLength={1} maxLength={300} value={title} onChange={(e) => setTitle(e.target.value)} />
                 </div>
                 <p>Please note that the date and time selected are in your local time (as reported by the browser) however they are saved into the database with the timezone data in order to ensure consistency between timezones</p>
                 <div>
@@ -45,7 +47,10 @@ export const Reservation: React.FC = () => {
                         name="datetime-start"
                         value={startDatetime}
                         min={selectedReservation ? "" : convertToLocalTime(getCurrentDatetime())}
-                        onChange={(e) => setStartDatetime(e.target.value)}
+                        onChange={(e) => {
+                            setStartDatetime(e.target.value)
+                            endDatetime && startDatetime && endDatetime < startDatetime ? setEndDatetime(e.target.value) : null // endDatetime && startDatetime needed to ensure they are not undefined
+                        }}
                     />
                 </div>
                 <div>
@@ -60,9 +65,14 @@ export const Reservation: React.FC = () => {
                     />
                 </div>
             </form>
-            <div className="caption error">
-                {reservationError}
-            </div>
+            {reservationError ?
+                <div className="caption error">
+                    <span className="error-icon material-symbols-outlined">
+error
+</span>
+                    {getErrorMessage(reservationError, true, 'EN')}
+                </div> : null
+            }
         </div>
     )
 }

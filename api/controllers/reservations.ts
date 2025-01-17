@@ -1,5 +1,6 @@
 import { db } from '../app.ts'
 import express from 'express'
+import { getErrorMessage, reservationStaticValidator } from '../../src/functions/common.ts'
 
 const reservations = (req: express.Request, res: express.Response) => {
     db.query('SELECT * FROM reservations', (err, results) => {
@@ -26,11 +27,18 @@ const reservation = (req: express.Request, res: express.Response) => {
 
 const newReservation = async (req: express.Request, res: express.Response) => {
     const { title, start, end } = req.body;
-    if (title === "") {
-        console.error("Failed to add reservation: title cannot be empty");
+
+    const staticValidationResult = reservationStaticValidator(title, start, end)
+    if (staticValidationResult) {
+        res.status(400).json({
+            errorCode: staticValidationResult,
+            message: getErrorMessage(staticValidationResult, true, 'en')
+        })
     } else if (await isOccupied(undefined, start, end) != false) {
-        console.error("The room is already occupied during that period")
-        res.status(500).json({error: "occupied"})
+        res.status(409).json({ // 409 HTTP error code
+            errorCode: 'time_period-occupied',
+            message: getErrorMessage('time_period-occupied', true, 'en')
+        })
     } else {
         db.query(
             'INSERT INTO reservations (title, start, end, created_at, last_modified_at) VALUES (?, ?, ?, UNIX_TIMESTAMP(), NULL)',
@@ -47,10 +55,20 @@ const newReservation = async (req: express.Request, res: express.Response) => {
     }
 };
 
-const updateReservation = (req: express.Request, res: express.Response) => {
+const updateReservation = async (req: express.Request, res: express.Response) => {
     const { title, start, end, id } = req.body;
-    if (title === "") {
-        console.error("Failed to update reservation: title cannot be empty");
+
+    const staticValidationResult = reservationStaticValidator(title, start, end)
+    if (staticValidationResult) {
+        res.status(400).json({
+            errorCode: staticValidationResult,
+            message: getErrorMessage(staticValidationResult, true, 'en')
+        })
+    } else if (await isOccupied(undefined, start, end) != false) {
+        res.status(409).json({ // 409 HTTP error code
+            errorCode: 'time_period-occupied',
+            message: getErrorMessage('time_period-occupied', true, 'en')
+        })
     } else {
         db.query(
             'UPDATE reservations SET title = ?, start = ?, end = ?, last_modified_at = UNIX_TIMESTAMP() WHERE id = ?',
@@ -87,7 +105,7 @@ export default {
     deleteReservation
 }
 
-const isOccupied = async (room_id: number | undefined, start: number, end: number): Promise<boolean | string> => {
+const isOccupied = async (room_id: number | void, start: number, end: number): Promise<boolean | string> => {
     return new Promise((resolve, reject) => {
         db.query(
             'SELECT * FROM reservations WHERE NOT (end <= ? OR start >= ?)',

@@ -29,3 +29,6 @@ export const getFormattedDatetimeFromUNIX = (UNIX_timestamp: number, format: str
     }
 }
 
+export const durationFromFormatted = (start: string, end: string) : number => { // in seconds
+    return Math.floor(new Date(end).getTime() / 1000) - Math.floor(new Date(start).getTime() / 1000)
+}

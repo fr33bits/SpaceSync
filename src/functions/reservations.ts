@@ -9,9 +9,10 @@ export interface Reservation {
     last_modified_at?: number
 }
 
-interface ApiResponse {
+export interface ApiResponse {
     message: string,
-    id?: number
+    id?: number,
+    errorCode?: string // my custom implementation
 }
 
 export const getReservations = async (): Promise<Reservation[]> => {
@@ -48,7 +49,7 @@ export const getReservation = async (reservation_id: number): Promise<Reservatio
     }
 }
 
-export const createReservation = async (reservation: Reservation): Promise<Reservation> => {
+export const createReservation = async (reservation: Reservation): Promise<Reservation | ApiResponse> => {
     try {
         const response: AxiosResponse<any> = await axios.post(
             "http://localhost:4000" + "/api/reservations",
@@ -58,21 +59,23 @@ export const createReservation = async (reservation: Reservation): Promise<Reser
                 end: reservation.end
             }
         )
-        console.log("Added new reservation: ", response)
         return response.data
-    } catch (error) {
+    } catch (error) { // throws the error to where the call originated from
         if (axios.isAxiosError(error)) {
-            console.log("Axios error: ", error.response?.data || error.message)
+            throw new Error(error.response?.data.errorCode ?? error.message)
+            
+            // ! alternative error handling; could also use throw instead of return but would need to handle in catch
+            // return {errorCode: error.response?.data.errorCode, message: error.message}
         } else {
-            console.error("Unexpected error: ", error)
+            console.error("Not an Axios error", error)
+            throw error
         }
-        throw error
     }
 }
 
-export const updateReservation = async (reservation: Reservation): Promise<void> => {
+export const updateReservation = async (reservation: Reservation): Promise<void | string> => {
     try {
-        const response: AxiosResponse<ApiResponse> = await axios.put(
+        await axios.put(
             "http://localhost:4000" + "/api/reservations",
             {
                 id: reservation.id,
@@ -81,12 +84,12 @@ export const updateReservation = async (reservation: Reservation): Promise<void>
                 end: reservation.end
             }
         )
-        console.log("Updated reservation: ", response)
     } catch (error) {
         if (axios.isAxiosError(error)) {
-            console.log("Axios error: ", error.response?.data || error.message)
+            throw new Error(error.response?.data.errorCode ?? error.message)
         } else {
-            console.error("Unexpected error: ", error)
+            console.error("Not an Axios error", error)
+            throw error
         }
     }
 }
