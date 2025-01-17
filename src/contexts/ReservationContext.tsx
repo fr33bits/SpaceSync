@@ -60,8 +60,8 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
                 const endDatetimeFormatted: string = getFormattedDatetimeFromUNIX(fetchedData.end, "date_picker-input")
                 setStartDatetime(startDatetimeFormatted)
                 setEndDatetime(endDatetimeFormatted)
-                setLoading(false)
             }
+            setLoading(false)
         } catch (error) {
             console.error(error)
         }

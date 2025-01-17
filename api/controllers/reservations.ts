@@ -24,10 +24,13 @@ const reservation = (req: express.Request, res: express.Response) => {
     });
 };
 
-const newReservation = (req: express.Request, res: express.Response) => {
+const newReservation = async (req: express.Request, res: express.Response) => {
     const { title, start, end } = req.body;
     if (title === "") {
         console.error("Failed to add reservation: title cannot be empty");
+    } else if (await isOccupied(undefined, start, end) != false) {
+        console.error("The room is already occupied during that period")
+        res.status(500).json({error: "occupied"})
     } else {
         db.query(
             'INSERT INTO reservations (title, start, end, created_at, last_modified_at) VALUES (?, ?, ?, UNIX_TIMESTAMP(), NULL)',
@@ -83,3 +86,20 @@ export default {
     updateReservation,
     deleteReservation
 }
+
+const isOccupied = async (room_id: number | undefined, start: number, end: number): Promise<boolean | string> => {
+    return new Promise((resolve, reject) => {
+        db.query(
+            'SELECT * FROM reservations WHERE NOT (end <= ? OR start >= ?)',
+            [start, end],
+            (err, result) => {
+                if (err) {
+                    console.error(err);
+                    reject("The SQL query in the function isOccupied returned an error");
+                } else {
+                    resolve((result as any[]).length > 0); // true if there are overlapping reservations, false otherwise
+                }
+            }
+        );
+    });
+};
