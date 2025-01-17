@@ -25,31 +25,37 @@ const reservation = (req: Request, res: Response) => {
 };
 
 const newReservation = (req: Request, res: Response) => {
-    const { name, date, time } = req.body;
+    const { title, start, end } = req.body;
     db.query(
-        'INSERT INTO reservations (name, date, time) VALUES (?, ?, ?)',
-        [name, date, time],
+        'INSERT INTO reservations (title, start, end, created_at, last_modified_at) VALUES (?, ?, ?, UNIX_TIMESTAMP(), NULL)',
+        [title, start, end],
         (err, result: any) => {
             if (err) {
                 console.error(err);
                 res.status(500).json({ error: 'Failed to add reservation' });
+            } else if (title === "") {
+                console.error("Failed to add reservation: title cannot be empty");
+                res.status(500).json({ error: "Failed to add reservation: title cannot be empty"});
             } else {
-                res.status(201).json({ message: 'Reservation added', id: (result as any).insertId });
+                res.status(201).json({ message: 'Reservation added', id: result.insertId });
             }
         }
     );
 };
 
 const updateReservation = (req: Request, res: Response) => {
-    const { name, date, time, id } = req.body;
+    const { title, start, end, id } = req.body;
     db.query(
-        'UPDATE reservations SET (name, date, time) VALUES (?, ?, ?, ) WHERE id = ?',
-        [name, date, time, id],
+        'UPDATE reservations SET (title, start, end, modified_at) VALUES (?, ?, ?, UNIX_TIMESTAMP()) WHERE id = ?',
+        [title, start, end, id],
         (err, result: any) => {
             if (err) {
                 console.error(err);
                 res.status(500).json({ error: 'Failed to update reservation' });
-            } else {
+            } else if (title === "") {
+                console.error("Failed to update reservation: title cannot be empty");
+                res.status(500).json({ error: "Failed to update reservation: title cannot be empty"});
+            }  else {
                 res.status(201).json({ message: 'Reservation updated', id: result.insertId });
             }
         }
