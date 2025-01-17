@@ -1,7 +1,7 @@
 import { getReservation, Reservation as ReservationType, ApiResponse, createReservation, updateReservation, deleteReservation } from '../functions/reservations'
 
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import { getCurrentDatetime, convertToLocalTime, getFormattedDatetimeFromUNIX } from '../functions/datetime'
+import { getCurrentDatetime, convertToLocalTime, getFormattedDatetimeFromUNIX, toUNIXSeconds } from '../functions/datetime'
 
 import { useView } from '../contexts/ViewContext'
 import { reservationStaticValidator } from '../functions/common';
@@ -43,7 +43,8 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
                     convertToLocalTime(getCurrentDatetime())
                 ).getTime() / 1000)
                 + 1200, // default reservation duration: 20 min
-                'date_picker-input'
+                'date_picker-input',
+                false
             )
         )
     )
@@ -67,8 +68,8 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
                 const fetchedData: ReservationType = await getReservation(selectedReservation)
                 setFetchedReservation(fetchedData)
                 setTitle(fetchedData.title)
-                const startDatetimeFormatted: string = getFormattedDatetimeFromUNIX(fetchedData.start, 'date_picker-input')
-                const endDatetimeFormatted: string = getFormattedDatetimeFromUNIX(fetchedData.end, 'date_picker-input')
+                const startDatetimeFormatted: string = getFormattedDatetimeFromUNIX(fetchedData.start, 'date_picker-input', false)
+                const endDatetimeFormatted: string = getFormattedDatetimeFromUNIX(fetchedData.end, 'date_picker-input', false)
                 setStartDatetime(startDatetimeFormatted)
                 setEndDatetime(endDatetimeFormatted)
             }
@@ -98,7 +99,8 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
                             convertToLocalTime(getCurrentDatetime())
                         ).getTime() / 1000)
                         + 1200, // min. reservation duration: 5 min
-                        'date_picker-input'
+                        'date_picker-input',
+                        false
                     )
                 )
             )
@@ -110,13 +112,13 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
     // runs on every change in data
     useEffect(() => {
-        setError(reservationStaticValidator(title, startDatetime, endDatetime))
+        setError(reservationStaticValidator(title, toUNIXSeconds(startDatetime), toUNIXSeconds(endDatetime)))
 
         if (fetchedReservation) {
             if (
                 title != fetchedReservation.title ||
-                startDatetime != getFormattedDatetimeFromUNIX(fetchedReservation.start, 'date_picker-input') ||
-                endDatetime != getFormattedDatetimeFromUNIX(fetchedReservation.end, 'date_picker-input')
+                startDatetime != getFormattedDatetimeFromUNIX(fetchedReservation.start, 'date_picker-input', false) ||
+                endDatetime != getFormattedDatetimeFromUNIX(fetchedReservation.end, 'date_picker-input', false)
 
             ) {
                 setChangedReservation(true)
@@ -132,8 +134,8 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const discardChanges = () => {
         if (fetchedReservation && changedReservation) {
             setTitle(fetchedReservation.title)
-            setStartDatetime(getFormattedDatetimeFromUNIX(fetchedReservation.start, 'date_picker-input'))
-            setEndDatetime(getFormattedDatetimeFromUNIX(fetchedReservation.end, 'date_picker-input'))
+            setStartDatetime(getFormattedDatetimeFromUNIX(fetchedReservation.start, 'date_picker-input', false))
+            setEndDatetime(getFormattedDatetimeFromUNIX(fetchedReservation.end, 'date_picker-input', false))
         } else {
             setError("Unknown error: code 287304")
         }
@@ -144,7 +146,7 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
         try {
             if (selectedReservation) { // update existing reservation
-                const response = await updateReservation({
+                await updateReservation({
                     id: selectedReservation,
                     title: title,
                     start: Math.floor(new Date(startDatetime).getTime() / 1000),

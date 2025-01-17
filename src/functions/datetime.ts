@@ -3,6 +3,10 @@ export const getCurrentDatetime = () => {
     return now.toISOString()
 }
 
+export const toUNIXSeconds = (time: string) : number => {
+    return Math.floor(new Date(time).getTime() / 1000)
+}
+
 export const convertToLocalTime = (isoString: string) => {
     const localDate = new Date(isoString); // convert ISO string to Date object
 
@@ -16,21 +20,29 @@ export const convertToLocalTime = (isoString: string) => {
     return `${year}-${month}-${day}T${hours}:${minutes}`; // 'YYYY-MM-DDTHH:mm' format
 }
 
-export const getFormattedDatetimeFromUNIX = (UNIX_timestamp: number, format: string): string => {
+export const getFormattedDatetimeFromUNIX = (UNIX_timestamp: number, format: string, withoutSeconds: boolean): string => {
     const date = new Date(UNIX_timestamp * 1000)
     if (format === 'date_picker-input') {
         return convertToLocalTime(date.toISOString())
     } else if (format == 'local') {
         const formattedDate = date.toLocaleDateString("sl-SI")
         const formattedTime = date.toLocaleTimeString("sl-SI")
-        return `${formattedDate} ${formattedTime}`.slice(0, -3)
+        if (withoutSeconds) {
+            return `${formattedDate} ${formattedTime}`.slice(0, -3)
+        } else {
+            return `${formattedDate} ${formattedTime}`
+        }
     } else {
         return "Format not specified!"
     }
 }
 
 export const durationFromFormatted = (start: string, end: string) : number => { // in seconds
-    return Math.floor(new Date(end).getTime() / 1000) - Math.floor(new Date(start).getTime() / 1000)
+    return toUNIXSeconds(end) - toUNIXSeconds(start)
+}
+
+export const durationFromUNIX = (start: number, end: number) : number => {
+    return end - start
 }
 
 export const durationHHMM = (duration: number): string => { // in seconds

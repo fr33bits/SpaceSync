@@ -98,7 +98,7 @@ export const deleteReservation = async (reservation_id: number): Promise<boolean
     const confirmation = window.confirm("Are you sure you want to delete this reservation?");
     if (confirmation) {
         try {
-            const response: AxiosResponse<any> = await axios.delete(
+            await axios.delete(
                 "http://localhost:4000" + `/api/reservations/${reservation_id}`,
             )
         } catch (error) {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { getCurrentDatetime, convertToLocalTime, getFormattedDatetimeFromUNIX, durationFromFormatted, durationHHMM } from '../functions/datetime'
+import { durationFromFormatted, durationHHMM } from '../functions/datetime'
 import { getErrorMessage } from '../functions/common.ts'
 
 import { useReservation } from "../contexts/ReservationContext.tsx"
@@ -11,7 +11,6 @@ export const Reservation: React.FC = () => {
 
     // CONTEXT STATES
     const reservationContext = useReservation()
-    const selectedReservation = reservationContext?.selectedReservation
     const title = reservationContext?.title
     const setTitle = reservationContext?.setTitle
     const startDatetime = reservationContext?.startDatetime

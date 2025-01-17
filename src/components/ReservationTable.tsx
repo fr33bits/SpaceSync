@@ -75,10 +75,10 @@ export const ReservationTable: React.FC = () => {
                             {reservation.title}
                         </th>
                         <td>
-                            {getFormattedDatetimeFromUNIX(reservation.start, 'local')}
+                            {getFormattedDatetimeFromUNIX(reservation.start, 'local', true)}
                         </td>
                         <td>
-                            {getFormattedDatetimeFromUNIX(reservation.end, 'local')}
+                            {getFormattedDatetimeFromUNIX(reservation.end, 'local', true)}
                         </td>
                         <td>
                             {durationHHMM(reservation.end - reservation.start)}

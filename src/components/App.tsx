@@ -5,6 +5,8 @@ import { Toolbar } from './Toolbar.tsx'
 import '../styles/App.css'
 import { useView } from '../contexts/ViewContext.tsx'
 
+import logo from '../assets/logo.png'
+
 function App() {
   const viewContext = useView()
   const selectedView = viewContext?.selectedView
@@ -20,7 +22,7 @@ function App() {
       <div className='header-container'>
         <div className="header">
           <div className="header-logo">
-            <img src="/src/assets/logo.png" alt="SpaceSync logo" draggable='false' />
+            <img src={logo} alt="SpaceSync logo" draggable='false' />
           </div>
           <div className='header-name michroma-regular'>
             SpaceSync

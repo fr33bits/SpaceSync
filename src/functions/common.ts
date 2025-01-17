@@ -1,4 +1,4 @@
-import { durationFromFormatted } from "./datetime";
+import { durationFromUNIX } from "../functions/datetime.ts";
 
 export const getErrorMessage = (error_code: string, capitalize: boolean, language: string | void) : string => {
     if (!language) {
@@ -93,7 +93,7 @@ export const getErrorMessage = (error_code: string, capitalize: boolean, languag
     }
 }
 
-export const reservationStaticValidator = (title: string | undefined, startDatetime: string, endDatetime: string): string => {
+export const reservationStaticValidator = (title: string | undefined, startDatetime: number, endDatetime: number): string => {
     if (!title) {
         return 'title-undefined'
     }
@@ -118,10 +118,10 @@ export const reservationStaticValidator = (title: string | undefined, startDatet
     if (endDatetime === startDatetime) {
         return 'datetime-same'
     }
-    if (durationFromFormatted(startDatetime, endDatetime) < 300) { // min. 5 min duration
+    if (durationFromUNIX(startDatetime, endDatetime) < 300) { // min. 5 min duration
         return 'datetime-too_short'
     }
-    if (durationFromFormatted(startDatetime, endDatetime) > 86400) { // max. 1 day duration
+    if (durationFromUNIX(startDatetime, endDatetime) > 86400) { // max. 1 day duration
         return 'datetime-too_long'
     }
     return '' // no error found
