@@ -39,11 +39,11 @@ CREATE TABLE reservations (
 5. Optionally, you can also insert test data (or create it yourself later in the app):
 
 ```sql
-INSERT INTO reservations (title, start, end)
+INSERT INTO reservations (title, start, end, created_at, last_modified_at)
 VALUES
-  ('John Doe', '2025-01-15', '19:00:00', 4),
-  ('Jane Smith', '2025-01-16', '20:00:00', 2),
-  ('Alice Johnson', '2025-01-17', '18:30:00', 3);
+  ('Planiranje strežniške arhitekture', 1737100800, 1737103500, 1737101524, NULL),
+  ('Predstavitev finančnega poročila za prejšnji kvaratal', 1737103500, 1737105300, 1737099059, 1737101512),
+  ('Marketinški brainstorming', 1737112500, 1737114600, 1737108870, NULL);
 ```
 
 Alternatively, you can create the same database in MySQL Workbench.
