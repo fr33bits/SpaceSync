@@ -4,13 +4,18 @@ SpaceSync is a room reservation and scheduling app. It's an SPA based on React a
 
 ## Set-up
 
+Tested on: Windows 10, macOS 14
+
 ### Prerequisites
 
-- You must have [Node](https://nodejs.org/en) installed, **preferably version 23.6 (in order to be able to run TypeScript code natively without having to use the `--experimental-strip-types` option)**
+- You must have [Node](https://nodejs.org/en) installed, **preferably v23.6 or later** (in order to be able to run TypeScript code natively without having to use the `--experimental-strip-types` option)
 - You must have [MySQL Community Server](https://dev.mysql.com/downloads/) installed.
-- The MySQL database must be set up with the username `root` and your chosen password (which you'll need in later steps).
+- The MySQL database must be set up with the root account (username `root`) and your chosen password (which you'll need in later steps).
+  - In case this is needed for troubleshooting purposes, the default port for MySQL installations is 3306.
 - You can verify your MySQL installation using the command `mysql --version`.
 - If the `mysql` command is not recognized, you may have to add it to your `PATH` variable.
+  - Windows 10 example (may differ based on Windows or MySQL Server versions and other variables): run `set path=%PATH%;set path=%PATH%;C:\Program Files\MySQL\MySQL Server 8.4\bin` in the Command Prompt
+- The exact set up may vary for different systems and other prerequisites or dependencies may be needed if not already present (e.g. git)
 
 ### Preparing the app
 
@@ -21,8 +26,8 @@ SpaceSync is a room reservation and scheduling app. It's an SPA based on React a
 ### Setting up the database
 
 1. In the CLI, first enter the MySQL server using the command `mysql -u root -p` and then, when prompted, enter the server password.
-2. Create a new database for this project: `CREATE DATABASE spacesync_db`
-3. Enter the database: `USE spacesync_db`
+2. Create a new database for this project: `CREATE DATABASE spacesync_db;`
+3. Enter the database: `USE spacesync_db;`
 4. Create a new table with the following schema:
 
 ```sql
@@ -33,7 +38,7 @@ CREATE TABLE reservations (
     end BIGINT NOT NULL, -- UNIX timestamp
     created_at BIGINT NOT NULL,-- UNIX timestamp
     last_modified_at BIGINT -- UNIX timestamp, NULL if not modified since creation
-)
+);
 ```
 
 5. Optionally, you can also insert test data (or create it yourself later in the app):
@@ -44,6 +49,8 @@ VALUES
   ('Planiranje strežniške arhitekture', 1737100800, 1737103500, 1737101524, NULL),
   ('Predstavitev finančnega poročila za prejšnji kvartal', 1737103500, 1737105300, 1737099059, 1737101512),
   ('Marketinški brainstorming', 1737112500, 1737114600, 1737108870, NULL);
+
+-- Warning: Windows may alter non-ASCII characters (e.g. š, č, ž) upon pasting into the Command Prompt or similar
 ```
 
 Alternatively, you can create the same database in MySQL Workbench.
@@ -52,11 +59,12 @@ Alternatively, you can create the same database in MySQL Workbench.
 
 In this case the environment variables will be set for a product environment. Port 4000 should generally be availible but if not, you can either kill the process using it or change the port.
 
-1. Create a new `.env` file that will hold your environment variables (e.g. run the `touch .env` command).
-2. Inside the `.env` paste the following and replace `<your_mysql_server_password>` with your MySQL server password:
+1. Change your working directory to the project root directory (if you're not there already)
+2. Create a new `.env` file that will hold your environment variables (e.g. run the `touch .env` command).
+3. Inside the `.env` paste the following and replace `<your_mysql_server_password>` with your MySQL server password and `<node_environment>` with the mode (`production` or `development` that you want to start the project in):
 
 ```env
-NODE_ENV=production
+NODE_ENV=<node_environment>
 PORT=4000
 
 DB_HOST=localhost
@@ -67,16 +75,18 @@ DB_PASSWORD=<your_mysql_server_password>
 
 ### Run the server
 
-1. Make sure you have ts-node installed globally: `npm install -g ts-node`
-2. Move into the `api` directory: `cd api`
-3. Run `node app.ts`. You should get a message saying that the app started on a certain port and is connected to the MySQL database.
+1. Move into the `api` directory: `cd api`
+2. Run `node app.ts` (`node --experimental-strip-types app.ts` if not on Node v23.6 or above). You should get a message saying that the app started on a certain port and is connected to the MySQL database.
+  - If this doesn't work, try globally installing `ts-node` with the command `npm install -g ts-node` and then rerunning the original command.
 
 ### Start the front-end
 
-1. Move into the project root directory (if you're in the `api` directory): `cd ..`
-2. Run the command `npm run dev` for developer mode or run commands `npm run build` and then `npm run preview` for production mode
+1. Change your working directory to the project root directory (if you're not there already)
+2. Depending on which environment your want to start the front end in, run the following commands:
+  - `npm run dev` for developer mode
+  - `npm run build` and then `npm run preview` for production mode
 
 ## Implementation notes
 
 - The title has a maximum character length of 300 and is enforced both on the client and with the database schema.
-- The title cannot be empty and that is enforced both on the side of the client and the API server
+- The title cannot be empty and that is enforced both on the side of the client and the API server.
