@@ -63,6 +63,7 @@ export const ReservationTable: React.FC = () => {
                     <th scope="col">Start</th>
                     <th scope="col">End</th>
                     <th scope="col">Duration</th>
+                    <th scope="col">Created at</th>
                 </tr>
             </thead>
             <tbody>
@@ -83,6 +84,17 @@ export const ReservationTable: React.FC = () => {
                         <td>
                             {durationHHMM(reservation.end - reservation.start)}
                         </td>
+                        {reservation.created_at ?
+                            <td>
+                                {getFormattedDatetimeFromUNIX(reservation.created_at, 'local', true)}
+                                <span className="updated">
+                                    {reservation.last_modified_at ?
+                                        ` Last updated: ${getFormattedDatetimeFromUNIX(reservation.last_modified_at, 'local', true)}`
+                                        : null
+                                    }
+                                </span>
+                            </td> : null
+                        }
                     </tr>
                 ))}
             </tbody>
