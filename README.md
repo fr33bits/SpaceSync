@@ -1,5 +1,11 @@
 # SpaceSync
 
+<picture align="center" width="500">
+  <source media="(prefers-color-scheme: dark)" alt="Logo" srcset="public/cover_dark.png">
+  <source media="(prefers-color-scheme: light)" alt="Logo" srcset="public/cover_light.png">
+  <img alt="Logo" src="cover_light.png">
+</picture>
+
 SpaceSync is a room reservation and scheduling app. It's an SPA based on React and TypeScript that talks to a Node.js API server, which connects to a MySQL database.
 
 ## Set-up
