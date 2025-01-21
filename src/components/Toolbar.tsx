@@ -59,7 +59,7 @@ export const Toolbar = () => {
                 }
             </div>
         )
-    } else if (selectedView === 'reservation-new') {
+    } else if (selectedView === 'reservation-new' && !reservationError) {
         toolbar_right = (
             <div className='toolbar-buttons'>
                 <div

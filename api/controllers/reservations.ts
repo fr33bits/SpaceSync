@@ -6,7 +6,10 @@ const reservations = (req: express.Request, res: express.Response) => {
     db.query('SELECT * FROM reservations', (err, results) => {
         if (err) {
             console.error(err);
-            res.status(500).json({ error: 'Failed to fetch reservations' });
+            res.status(500).json({
+                errorCode: 'reservations-fetch-failed',
+                message: getErrorMessage('reservations-fetch-failed', true, 'en')
+            });
         } else {
             res.json(results);
         }
@@ -18,7 +21,10 @@ const reservation = (req: express.Request, res: express.Response) => {
     db.query('SELECT * FROM reservations WHERE id = ?', [id], (err, results) => {
         if (err) {
             console.error(err);
-            res.status(500).json({ error: 'Failed to fetch reservation' });
+            res.status(500).json({
+                errorCode: 'reservation-fetch-failed',
+                message: getErrorMessage('reservation-fetch-failed', true, 'en')
+            });
         } else {
             res.json(results);
         }
@@ -46,7 +52,10 @@ const newReservation = async (req: express.Request, res: express.Response) => {
             (err, result: any) => {
                 if (err) {
                     console.error(err);
-                    res.status(500).json({ error: 'Failed to add reservation' });
+                    res.status(500).json({
+                        errorCode: 'reservation-add-failed',
+                        message: getErrorMessage('reservation-add-failed', true, 'en')
+                    });
                 } else {
                     res.status(201).json({ message: 'Reservation added', id: result.insertId });
                 }
@@ -76,7 +85,10 @@ const updateReservation = async (req: express.Request, res: express.Response) =>
             (err, result: any) => {
                 if (err) {
                     console.error(err);
-                    res.status(500).json({ error: 'Failed to update reservation' });
+                    res.status(500).json({
+                        errorCode: 'reservation-update-failed',
+                        message: getErrorMessage('reservation-update-failed', true, 'en')
+                    });
                 } else {
                     res.status(201).json({ message: 'Reservation updated' });
                 }
@@ -90,7 +102,9 @@ const deleteReservation = (req: express.Request, res: express.Response) => {
     db.query('DELETE FROM reservations WHERE id = ?', [id], (err, result) => {
         if (err) {
             console.error(err);
-            res.status(500).json({ error: 'Failed to delete reservation' });
+            res.status(500).json({
+                errorCode: 'reservation-delete-failed',
+                message: getErrorMessage('reservation-delete-failed', true, 'en')});
         } else {
             res.json({ message: 'Reservation deleted' });
         }
@@ -110,10 +124,10 @@ const isOccupied = async (room_id: number | void, start: number, end: number, id
     let queryArgs: any[]
     if (id) {
         query = 'SELECT * FROM reservations WHERE id <> ? AND NOT (end <= ? OR start >= ?)'
-        queryArgs =  [id, start, end]
+        queryArgs = [id, start, end]
     } else {
         query = 'SELECT * FROM reservations WHERE NOT (end <= ? OR start >= ?)'
-        queryArgs =  [start, end]
+        queryArgs = [start, end]
     }
     return new Promise((resolve, reject) => {
         db.query(
@@ -122,7 +136,7 @@ const isOccupied = async (room_id: number | void, start: number, end: number, id
             (err, result) => {
                 if (err) {
                     console.error(err);
-                    reject("The SQL query in the function isOccupied returned an error");
+                    reject("The SQL query in the function isOccupied returned an error"); // ! this message technically isn't processed further
                 } else {
                     resolve((result as any[]).length > 0); // true if there are overlapping reservations, false otherwise
                 }

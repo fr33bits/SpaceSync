@@ -24,7 +24,10 @@ export const getReservations = async (): Promise<Reservation[]> => {
         return data
     } catch (error) {
         if (axios.isAxiosError(error)) {
-            console.log("Axios error: ", error.response?.data || error.message)
+            console.log("Axios error: ", error.response?.data.error || error.message)
+
+            // ! alternative error handling; could also use throw instead of return but would need to handle in catch
+            // return {errorCode: error.response?.data.error.errorCode, message: error.message}
         } else {
             console.error("Unexpected error: ", error)
         }
@@ -41,7 +44,7 @@ export const getReservation = async (reservation_id: number): Promise<Reservatio
         return data
     } catch (error) {
         if (axios.isAxiosError(error)) {
-            console.log("Axios error: ", error.response?.data || error.message)
+            console.log("Axios error: ", error.response?.data.error || error.message)
         } else {
             console.error("Unexpected error: ", error)
         }
@@ -62,14 +65,11 @@ export const createReservation = async (reservation: Reservation): Promise<Reser
         return response.data
     } catch (error) { // throws the error to where the call originated from
         if (axios.isAxiosError(error)) {
-            throw new Error(error.response?.data.errorCode ?? error.message)
-            
-            // ! alternative error handling; could also use throw instead of return but would need to handle in catch
-            // return {errorCode: error.response?.data.errorCode, message: error.message}
+            console.log("Axios error: ", error.response?.data.error || error.message)
         } else {
             console.error("Not an Axios error", error)
-            throw error
         }
+        throw error
     }
 }
 
@@ -86,11 +86,11 @@ export const updateReservation = async (reservation: Reservation): Promise<void 
         )
     } catch (error) {
         if (axios.isAxiosError(error)) {
-            throw new Error(error.response?.data.errorCode ?? error.message)
+            console.log("Axios error: ", error.response?.data.error || error.message)
         } else {
             console.error("Not an Axios error", error)
-            throw error
         }
+        throw error
     }
 }
 
@@ -103,7 +103,7 @@ export const deleteReservation = async (reservation_id: number): Promise<boolean
             )
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                console.log("Axios error: ", error.response?.data || error.message)
+                console.log("Axios error: ", error.response?.data.error || error.message)
             } else {
                 console.error("Unexpected error: ", error)
             }

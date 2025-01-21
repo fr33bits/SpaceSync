@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { durationFromFormatted, durationHHMM } from '../functions/datetime'
-import { getErrorMessage } from '../functions/common.ts'
 
+import { Notice } from "./Notice.tsx"
 import { useReservation } from "../contexts/ReservationContext.tsx"
 import '../styles/Reservation.css'
 
@@ -39,6 +39,10 @@ export const Reservation: React.FC = () => {
             setDuration(durationHHMM(durationSec))
         }
     }, [startDatetime, endDatetime])
+
+    if (reservationError === 'ERR_NETWORK' || reservationError === 'reservation-fetch-failed') {
+        return (<div>{reservationError ? <Notice notice={reservationError}/> : null}</div>)
+    }
 
     return (
         <div className="reservation">
@@ -85,14 +89,7 @@ export const Reservation: React.FC = () => {
                 <br/>
                 <p>Please note that the date and time selected are in your local time (as reported by the browser) however they are saved into the database with the timezone data in order to ensure consistency between timezones</p>
             </div>
-            {reservationError ?
-                <div className="error">
-                    <span className="error-icon material-symbols-outlined">
-                        error
-                    </span>
-                    {getErrorMessage(reservationError, true, 'EN')}
-                </div> : null
-            }
+            {reservationError ? <Notice notice={reservationError}/> : null}
         </div>
     )
 }

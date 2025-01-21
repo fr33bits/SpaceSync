@@ -3,6 +3,7 @@ import { durationHHMM, getFormattedDatetimeFromUNIX } from "../functions/datetim
 import { getReservations, Reservation } from "../functions/reservations"
 import '../styles/ReservationTable.css'
 
+import { Notice } from "./Notice"
 import { useView } from "../contexts/ViewContext"
 import { useReservation } from "../contexts/ReservationContext"
 
@@ -29,9 +30,10 @@ export const ReservationTable: React.FC = () => {
             try {
                 const data: Reservation[] = await getReservations()
                 setReservations(data)
-                setLoading(false)
+                setError("")
             } catch (err: any) {
-                setError(err.message || "Failed to fetch reservations")
+                setError(err.response?.data.errorCode || err.code || err.message)
+            } finally {
                 setLoading(false)
             }
         }
@@ -41,9 +43,7 @@ export const ReservationTable: React.FC = () => {
 
     if (error) {
         return (
-            <div>
-                ERROR: {error}
-            </div>
+            <Notice notice={error}/>
         )
     }
     if (loading) {

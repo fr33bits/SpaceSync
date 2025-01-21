@@ -72,10 +72,12 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
                 const endDatetimeFormatted: string = getFormattedDatetimeFromUNIX(fetchedData.end, 'date_picker-input', false)
                 setStartDatetime(startDatetimeFormatted)
                 setEndDatetime(endDatetimeFormatted)
+                setError("")
             }
+        } catch (err: any) {
+            setError(err.response?.data.errorCode || err.code || err.message)
+        } finally {
             setLoading(false)
-        } catch (error) {
-            console.error(error)
         }
     }
 
@@ -119,7 +121,6 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
                 title != fetchedReservation.title ||
                 startDatetime != getFormattedDatetimeFromUNIX(fetchedReservation.start, 'date_picker-input', false) ||
                 endDatetime != getFormattedDatetimeFromUNIX(fetchedReservation.end, 'date_picker-input', false)
-
             ) {
                 setChangedReservation(true)
             } else {
@@ -136,8 +137,9 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
             setTitle(fetchedReservation.title)
             setStartDatetime(getFormattedDatetimeFromUNIX(fetchedReservation.start, 'date_picker-input', false))
             setEndDatetime(getFormattedDatetimeFromUNIX(fetchedReservation.end, 'date_picker-input', false))
+            setError("")
         } else {
-            setError("Unknown error: code 287304")
+            setError("287304")
         }
     }
 
@@ -168,24 +170,28 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
                 setSelectedReservation(response.id)
                 setSelectedView('reservation-existing')
             }
-        } catch (error) {
-            if (error instanceof Error) {
-                setError(error.message)
-            } else {
-                setError('An unknown (not Error) error occurred')
-                console.error(error)
-            }
+            setError("")
+        } catch (err: any) {
+            setError(err.response?.data.errorCode || err.code || err.message)
+        } finally {
+            setLoading(false)
         }
     }
 
     const handleDelete = async () => {
         if (selectedReservation) {
-            const result: boolean = await deleteReservation(selectedReservation)
-
-            if (result) { // deletion went through
-                // Update views
-                setSelectedReservation(undefined)
-                setSelectedView('table')
+            try {
+                const result: boolean = await deleteReservation(selectedReservation)
+    
+                if (result) { // deletion went through
+                    // Update views
+                    setSelectedReservation(undefined)
+                    setSelectedView('table')
+                }
+            } catch (err: any) {
+                setError(err.response?.data.errorCode || err.code || err.message)
+            } finally {
+                setLoading(false)
             }
         }
     }
