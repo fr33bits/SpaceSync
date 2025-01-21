@@ -19,8 +19,10 @@ Tested on: Windows 10, macOS 14
 - The MySQL database must be set up with the root account (username `root`) and your chosen password (which you'll need in later steps).
   - In case this is needed for troubleshooting purposes, the default port for MySQL installations is 3306.
 - You can verify your MySQL installation using the command `mysql --version`.
-- If the `mysql` command is not recognized, you may have to add it to your `PATH` variable.
-  - Windows 10 example (may differ based on Windows or MySQL Server versions and other variables): run `set path=%PATH%;set path=%PATH%;C:\Program Files\MySQL\MySQL Server 8.4\bin` in the Command Prompt
+  - If the `mysql` command is not recognized, you may have to add it to your `PATH` variable.
+    - Windows 10 example (may differ based on Windows or MySQL Server versions and other variables): run `set path=%PATH%;set path=%PATH%;C:\Program Files\MySQL\MySQL Server 8.4\bin` in the Command Prompt
+- Make sure the MySQL Community Server is up and running. You may have to bring it back online after a system restart.
+  - macOS: This can be done in System Settings > MySQL.
 - The exact set up may vary for different systems and other prerequisites or dependencies may be needed if not already present (e.g. git)
 
 ### Preparing the app
