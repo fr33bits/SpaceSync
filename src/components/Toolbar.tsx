@@ -16,11 +16,29 @@ export const Toolbar = () => {
     const discardChanges = reservationContext?.discardChanges
     const handleSubmit = reservationContext?.handleSubmit
     const reservationNotice = reservationContext?.notice
+    const setDefaultReservationFormData = reservationContext?.setDefaultReservationFormData
     if (!setSelectedView) {
         throw new Error("setSelectedView is undefined")
     }
     if (!setSelectedReservation) {
         throw new Error("setSelectedReservation is undefined")
+    }
+    if (!setDefaultReservationFormData) {
+        throw new Error("setDefaultReservationFormData is undefined")
+    }
+
+    const exitReservation = () => {
+        let allow = false
+        if (changedReservation) {
+            allow = window.confirm("Are you sure you want to exit this reservation? Your changes will be lost.");
+        } else {
+            allow = true
+        }
+        if (allow) {
+            setSelectedView('table');
+            setSelectedReservation(undefined)
+            setDefaultReservationFormData()
+        }
     }
 
     let toolbar_right
@@ -80,7 +98,6 @@ export const Toolbar = () => {
         )
     }
 
-    // TODO: add prevention for losing changes when switching views
     return (
         <div className='toolbar'>
             <div className='toolbar-left'>
@@ -88,7 +105,7 @@ export const Toolbar = () => {
                     {selectedView != 'table' ?
                         <div
                             className='toolbar-button'
-                            onClick={() => { setSelectedView('table'); setSelectedReservation(undefined) }}
+                            onClick={() => exitReservation()}
                             title='Go back to the table of reservations'
                         >
                             <span className="material-symbols-outlined">

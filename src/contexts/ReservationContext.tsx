@@ -22,7 +22,8 @@ interface ReservationContextType {
     notice: string,
     setNotice?: React.Dispatch<React.SetStateAction<string>>;
     changedReservation: boolean,
-    setChangedReservation?: React.Dispatch<React.SetStateAction<boolean>>
+    setChangedReservation?: React.Dispatch<React.SetStateAction<boolean>>,
+    setDefaultReservationFormData: React.Dispatch<React.SetStateAction<void>>
 
     handleDelete: any
     handleSubmit: any
@@ -101,10 +102,8 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
         }
     }, [selectedReservation])
 
-    // populates (state) data
-    useEffect(() => {
-        if (!selectedReservation) { // new reservation or no reservation selected
-            setTitle("")
+    const setDefaultReservationFormData = () => {
+        setTitle("")
             setStartDatetime(convertToLocalTime(
                 getFormattedDatetimeFromUNIX(
                     Math.floor(new Date(
@@ -127,6 +126,12 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
                     )
                 )
             )
+    }
+
+    // populates (state) data
+    useEffect(() => {
+        if (!selectedReservation) { // new reservation or no reservation selected
+            setDefaultReservationFormData()
         }
 
         // existing reservation
@@ -199,6 +204,7 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
             }
             setNotice("")
         } catch (err: any) {
+            console.log(err.response?.data.noticeCode)
             setNotice(err.response?.data.noticeCode || err.code || err.message)
         } finally {
             setLoading(false)
@@ -238,7 +244,8 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
         changedReservation,
         handleDelete,
         handleSubmit,
-        discardChanges
+        discardChanges,
+        setDefaultReservationFormData
     }
 
     return (

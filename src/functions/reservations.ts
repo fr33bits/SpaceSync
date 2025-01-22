@@ -69,6 +69,7 @@ export const createReservation = async (reservation: Reservation): Promise<Reser
         } else {
             console.error("Not an Axios error", error)
         }
+        console.log(error)
         throw error
     }
 }
