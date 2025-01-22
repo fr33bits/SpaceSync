@@ -1,6 +1,9 @@
+import axios from 'axios'
 import { useEffect, useState } from "react"
-import { durationHHMM, getFormattedDatetimeFromUNIX } from "../functions/datetime"
-import { getReservations, Reservation } from "../functions/reservations"
+import { durationHHMM, getFormattedDatetimeFromUNIX } from "../../common/datetime"
+import { getReservations } from "../functions/reservations"
+import { Reservation } from '../../common/types.ts'
+
 import '../styles/ReservationTable.css'
 
 import { Notice } from "./Notice"
@@ -31,8 +34,12 @@ export const ReservationTable: React.FC = () => {
                 const data: Reservation[] = await getReservations()
                 setReservations(data)
                 setNotice("")
-            } catch (err: any) {
-                setNotice(err.response?.data.noticeCode || err.code || err.message)
+            } catch (err: unknown) {
+                if (axios.isAxiosError(err)) {
+                    setNotice(err.response?.data.noticeCode || err.code || err.message)
+                } else {
+                    setNotice(String(err))
+                }
             } finally {
                 setLoading(false)
             }

@@ -1,24 +1,27 @@
 import { db } from '../app.ts'
 import express from 'express'
-import { getNoticeDetails, reservationStaticValidator } from '../../src/functions/common.ts'
+import { getNoticeDetails } from '../../common/notices.ts'
+import { reservationStaticValidator } from '../../common/validation.ts'
+import mysql2 from 'mysql2';
 
 const reservations = (req: express.Request, res: express.Response) => {
-    db.query('SELECT * FROM reservations', (err, results) => {
-        if (err) {
-            console.error(err);
-            res.status(500).json({
-                noticeCode: 'reservations-fetch-failed',
-                message: getNoticeDetails('reservations-fetch-failed', true, 'en')
-            });
-        } else {
-            res.json(results);
-        }
-    });
+    db.query('SELECT * FROM reservations',
+        (err: mysql2.QueryError | null, result: mysql2.ResultSetHeader) => {
+            if (err) {
+                console.error(err);
+                res.status(500).json({
+                    noticeCode: 'reservations-fetch-failed',
+                    message: getNoticeDetails('reservations-fetch-failed', true, 'en')
+                });
+            } else {
+                res.json(result);
+            }
+        });
 };
 
 const reservation = (req: express.Request, res: express.Response) => {
     const { id } = req.params;
-    db.query('SELECT * FROM reservations WHERE id = ?', [id], (err, results) => {
+    db.query('SELECT * FROM reservations WHERE id = ?', [id], (err: mysql2.QueryError | null, result: mysql2.ResultSetHeader) => {
         if (err) {
             console.error(err);
             res.status(500).json({
@@ -26,7 +29,7 @@ const reservation = (req: express.Request, res: express.Response) => {
                 message: getNoticeDetails('reservation-fetch-failed', true, 'en')
             });
         } else {
-            res.json(results);
+            res.json(result);
         }
     });
 };
@@ -49,7 +52,7 @@ const newReservation = async (req: express.Request, res: express.Response) => {
         db.query(
             'INSERT INTO reservations (title, start, end, created_at, last_modified_at) VALUES (?, ?, ?, UNIX_TIMESTAMP(), NULL)',
             [title, start, end],
-            (err, result: any) => {
+            (err: mysql2.QueryError | null, result: mysql2.ResultSetHeader) => {
                 if (err) {
                     console.error(err);
                     res.status(500).json({
@@ -82,7 +85,7 @@ const updateReservation = async (req: express.Request, res: express.Response) =>
         db.query(
             'UPDATE reservations SET title = ?, start = ?, end = ?, last_modified_at = UNIX_TIMESTAMP() WHERE id = ?',
             [title, start, end, id],
-            (err, result: any) => {
+            (err: mysql2.QueryError | null, result: mysql2.ResultSetHeader) => {
                 if (err) {
                     console.error(err);
                     res.status(500).json({
@@ -99,12 +102,13 @@ const updateReservation = async (req: express.Request, res: express.Response) =>
 
 const deleteReservation = (req: express.Request, res: express.Response) => {
     const { id } = req.params;
-    db.query('DELETE FROM reservations WHERE id = ?', [id], (err, result) => {
+    db.query('DELETE FROM reservations WHERE id = ?', [id], (err: mysql2.QueryError | null, result: mysql2.ResultSetHeader) => {
         if (err) {
             console.error(err);
             res.status(500).json({
                 noticeCode: 'reservation-delete-failed',
-                message: getNoticeDetails('reservation-delete-failed', true, 'en')});
+                message: getNoticeDetails('reservation-delete-failed', true, 'en')
+            });
         } else {
             res.json({ message: 'Reservation deleted' });
         }
@@ -119,9 +123,14 @@ export default {
     deleteReservation
 }
 
-const isOccupied = async (room_id: number | void, start: number, end: number, id: number | undefined): Promise<boolean | string> => {
+const isOccupied = async (
+    room_id: number | void,
+    start: number,
+    end: number,
+    id: number | undefined
+): Promise<boolean | string> => {
     let query: string
-    let queryArgs: any[]
+    let queryArgs: [number, number, number] | [number, number];
     if (id) {
         query = 'SELECT * FROM reservations WHERE id <> ? AND NOT (end <= ? OR start >= ?)'
         queryArgs = [id, start, end]
@@ -133,12 +142,12 @@ const isOccupied = async (room_id: number | void, start: number, end: number, id
         db.query(
             query,
             queryArgs,
-            (err, result) => {
+            (err: mysql2.QueryError | null, result: mysql2.ResultSetHeader[]) => {
                 if (err) {
                     console.error(err);
                     reject("The SQL query in the function isOccupied returned an error"); // ! this message technically isn't processed further
                 } else {
-                    resolve((result as any[]).length > 0); // true if there are overlapping reservations, false otherwise
+                    resolve(result.length > 0); // true if there are overlapping reservations, false otherwise
                 }
             }
         );

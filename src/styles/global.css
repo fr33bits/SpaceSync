@@ -1,5 +1,7 @@
 #root {
-  color: white
+  color: white;
+  background-color: black;
+  height: 100vh;
 }
 
 .michroma-regular {

@@ -18,7 +18,7 @@ function App() {
     view = <ReservationTable />
   }
   return (
-    <div className="viewport">
+    <div className="app-container">
       <div className='header-container'>
         <div className="header">
           <div className="header-logo">

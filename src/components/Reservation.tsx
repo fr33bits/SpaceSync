@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { durationFromFormatted, durationHHMM, getFormattedDatetimeFromUNIX } from '../functions/datetime'
+import { durationFromFormatted, durationHHMM, getFormattedDatetimeFromUNIX } from '../../common/datetime.ts'
 
 import { Notice } from "./Notice.tsx"
 import { useReservation } from "../contexts/ReservationContext.tsx"

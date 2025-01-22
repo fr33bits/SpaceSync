@@ -1,4 +1,4 @@
-import { getNoticeDetails } from '../functions/common.ts'
+import { getNoticeDetails } from '../../common/notices.ts'
 
 interface NoticeProps {
     notice: string

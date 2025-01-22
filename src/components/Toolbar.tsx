@@ -1,6 +1,6 @@
 import { useView } from '../contexts/ViewContext.tsx'
 import { useReservation } from '../contexts/ReservationContext.tsx'
-import { getNoticeDetails } from '../functions/common.ts'
+import { getNoticeDetails } from '../../common/notices'
 
 import '../styles/Toolbar.css'
 

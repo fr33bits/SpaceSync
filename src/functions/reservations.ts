@@ -1,13 +1,5 @@
 import axios, { AxiosResponse } from 'axios'
-
-export interface Reservation {
-    id?: number,
-    title: string,
-    start: number,
-    end: number,
-    created_at?: number,
-    last_modified_at?: number
-}
+import {Reservation } from '../../common/types'
 
 export interface ApiResponse {
     message: string,
@@ -17,7 +9,7 @@ export interface ApiResponse {
 
 export const getReservations = async (): Promise<Reservation[]> => {
     try {
-        const response: AxiosResponse<any> = await axios.get(
+        const response: AxiosResponse = await axios.get( 
             "http://localhost:4000" + "/api/reservations",
         )
         const data: Reservation[] = response.data
@@ -37,7 +29,7 @@ export const getReservations = async (): Promise<Reservation[]> => {
 
 export const getReservation = async (reservation_id: number): Promise<Reservation> => {
     try {
-        const response: AxiosResponse<any> = await axios.get(
+        const response: AxiosResponse = await axios.get(
             "http://localhost:4000" + `/api/reservations/${reservation_id}`,
         )
         const data: Reservation = response.data[0]
@@ -52,9 +44,9 @@ export const getReservation = async (reservation_id: number): Promise<Reservatio
     }
 }
 
-export const createReservation = async (reservation: Reservation): Promise<Reservation | ApiResponse> => {
+export const createReservation = async (reservation: Reservation): Promise<Reservation> => {
     try {
-        const response: AxiosResponse<any> = await axios.post(
+        const response: AxiosResponse = await axios.post(
             "http://localhost:4000" + "/api/reservations",
             {
                 title: reservation.title,
@@ -69,12 +61,11 @@ export const createReservation = async (reservation: Reservation): Promise<Reser
         } else {
             console.error("Not an Axios error", error)
         }
-        console.log(error)
         throw error
     }
 }
 
-export const updateReservation = async (reservation: Reservation): Promise<void | string> => {
+export const updateReservation = async (reservation: Reservation): Promise<void> => {
     try {
         await axios.put(
             "http://localhost:4000" + "/api/reservations",

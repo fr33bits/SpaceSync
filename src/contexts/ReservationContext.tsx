@@ -1,33 +1,36 @@
-import { getReservation, Reservation as ReservationType, ApiResponse, createReservation, updateReservation, deleteReservation } from '../functions/reservations'
+import axios from 'axios'
+import { getReservation, ApiResponse, createReservation, updateReservation, deleteReservation } from '../functions/reservations'
+
+import { Reservation as ReservationType } from '../../common/types'
 
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import { getCurrentDatetime, convertToLocalTime, getFormattedDatetimeFromUNIX, toUNIXSeconds } from '../functions/datetime'
+import { getCurrentDatetime, convertToLocalTime, getFormattedDatetimeFromUNIX, toUNIXSeconds } from '../../common/datetime'
 
 import { useView } from '../contexts/ViewContext'
-import { reservationStaticValidator } from '../functions/common';
+import { reservationStaticValidator } from '../../common/validation';
 
 interface ReservationContextType {
-    selectedReservation: number | undefined;
-    setSelectedReservation: React.Dispatch<React.SetStateAction<number | undefined>>;
-    title: string;
-    setTitle: React.Dispatch<React.SetStateAction<string>>;
-    startDatetime: string | undefined;
-    setStartDatetime: React.Dispatch<React.SetStateAction<string>>;
-    endDatetime: string | undefined;
-    setEndDatetime: React.Dispatch<React.SetStateAction<string>>;
+    selectedReservation: number | undefined
+    setSelectedReservation: React.Dispatch<React.SetStateAction<number | undefined>>
+    title: string
+    setTitle: React.Dispatch<React.SetStateAction<string>>
+    startDatetime: string | undefined
+    setStartDatetime: React.Dispatch<React.SetStateAction<string>>
+    endDatetime: string | undefined
+    setEndDatetime: React.Dispatch<React.SetStateAction<string>>
     fetchedReservation: ReservationType | undefined
 
-    loading: boolean,
-    setLoading?: React.Dispatch<React.SetStateAction<boolean>>;
-    notice: string,
-    setNotice?: React.Dispatch<React.SetStateAction<string>>;
-    changedReservation: boolean,
-    setChangedReservation?: React.Dispatch<React.SetStateAction<boolean>>,
+    loading: boolean
+    setLoading?: React.Dispatch<React.SetStateAction<boolean>>
+    notice: string
+    setNotice?: React.Dispatch<React.SetStateAction<string>>
+    changedReservation: boolean
+    setChangedReservation?: React.Dispatch<React.SetStateAction<boolean>>
     setDefaultReservationFormData: React.Dispatch<React.SetStateAction<void>>
 
-    handleDelete: any
-    handleSubmit: any
-    discardChanges: any
+    handleDelete: () => Promise<void>
+    handleSubmit: () => Promise<void>
+    discardChanges: () => void
 }
 
 const ReservationContext = createContext<ReservationContextType | null>(null)
@@ -87,8 +90,12 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
                 setEndDatetime(endDatetimeFormatted)
                 setNotice("")
             }
-        } catch (err: any) {
-            setNotice(err.response?.data.noticeCode || err.code || err.message)
+        } catch (err: unknown) {
+            if (axios.isAxiosError(err)) {
+                setNotice(err.response?.data.noticeCode || err.message)
+            } else {
+                setNotice(String(err))
+            }
         } finally {
             setLoading(false)
         }
@@ -104,28 +111,28 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
     const setDefaultReservationFormData = () => {
         setTitle("")
-            setStartDatetime(convertToLocalTime(
+        setStartDatetime(convertToLocalTime(
+            getFormattedDatetimeFromUNIX(
+                Math.floor(new Date(
+                    convertToLocalTime(getCurrentDatetime())
+                ).getTime() / 1000)
+                + 3600, // default start time: 1 hour from the current time
+                'date_picker-input',
+                false
+            )
+        ))
+        setEndDatetime(
+            convertToLocalTime(
                 getFormattedDatetimeFromUNIX(
                     Math.floor(new Date(
                         convertToLocalTime(getCurrentDatetime())
                     ).getTime() / 1000)
-                    + 3600, // default start time: 1 hour from the current time
+                    + 3600 + 1200, // min. reservation duration: 5 min
                     'date_picker-input',
                     false
                 )
-            ))
-            setEndDatetime(
-                convertToLocalTime(
-                    getFormattedDatetimeFromUNIX(
-                        Math.floor(new Date(
-                            convertToLocalTime(getCurrentDatetime())
-                        ).getTime() / 1000)
-                        + 3600 + 1200, // min. reservation duration: 5 min
-                        'date_picker-input',
-                        false
-                    )
-                )
             )
+        )
     }
 
     // populates (state) data
@@ -203,9 +210,12 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
                 setSelectedView('reservation-existing')
             }
             setNotice("")
-        } catch (err: any) {
-            console.log(err.response?.data.noticeCode)
-            setNotice(err.response?.data.noticeCode || err.code || err.message)
+        } catch (err: unknown) {
+            if (axios.isAxiosError(err)) {
+                setNotice(err.response?.data.noticeCode || err.code || err.message)
+            } else {
+                setNotice(String(err))
+            }
         } finally {
             setLoading(false)
         }
@@ -215,14 +225,18 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
         if (selectedReservation) {
             try {
                 const result: boolean = await deleteReservation(selectedReservation)
-    
+
                 if (result) { // deletion went through
                     // Update views
                     setSelectedReservation(undefined)
                     setSelectedView('table')
                 }
-            } catch (err: any) {
-                setNotice(err.response?.data.noticeCode || err.code || err.message)
+            } catch (err: unknown) {
+                if (axios.isAxiosError(err)) {
+                    setNotice(err.response?.data.noticeCode || err.code || err.message)
+                } else {
+                    setNotice(String(err))
+                }
             } finally {
                 setLoading(false)
             }
