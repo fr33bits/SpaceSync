@@ -1,5 +1,6 @@
 import { useView } from '../contexts/ViewContext.tsx'
 import { useReservation } from '../contexts/ReservationContext.tsx'
+import { getNoticeDetails } from '../functions/common.ts'
 
 import '../styles/Toolbar.css'
 
@@ -14,7 +15,7 @@ export const Toolbar = () => {
     const handleDelete = reservationContext?.handleDelete
     const discardChanges = reservationContext?.discardChanges
     const handleSubmit = reservationContext?.handleSubmit
-    const reservationError = reservationContext?.error
+    const reservationNotice = reservationContext?.notice
     if (!setSelectedView) {
         throw new Error("setSelectedView is undefined")
     }
@@ -35,7 +36,7 @@ export const Toolbar = () => {
                         delete
                     </span>
                 </div>
-                {changedReservation && !reservationError ?
+                {changedReservation && !reservationNotice ?
                     <>
                         <div
                             className='toolbar-button'
@@ -59,7 +60,11 @@ export const Toolbar = () => {
                 }
             </div>
         )
-    } else if (selectedView === 'reservation-new' && !reservationError) {
+    } else if (
+        selectedView === 'reservation-new' &&
+        (!reservationNotice || (
+            reservationNotice && getNoticeDetails(reservationNotice, true, 'en').type != 'error'
+        ))) {
         toolbar_right = (
             <div className='toolbar-buttons'>
                 <div

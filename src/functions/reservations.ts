@@ -12,7 +12,7 @@ export interface Reservation {
 export interface ApiResponse {
     message: string,
     id?: number,
-    errorCode?: string // my custom implementation
+    noticeCode?: string // my custom implementation
 }
 
 export const getReservations = async (): Promise<Reservation[]> => {
@@ -27,7 +27,7 @@ export const getReservations = async (): Promise<Reservation[]> => {
             console.log("Axios error: ", error.response?.data.error || error.message)
 
             // ! alternative error handling; could also use throw instead of return but would need to handle in catch
-            // return {errorCode: error.response?.data.error.errorCode, message: error.message}
+            // return {noticeCode: error.response?.data.error.noticeCode, message: error.message}
         } else {
             console.error("Unexpected error: ", error)
         }

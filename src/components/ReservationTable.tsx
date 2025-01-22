@@ -11,7 +11,7 @@ export const ReservationTable: React.FC = () => {
     // COMPONENT STATES
     const [reservations, setReservations] = useState<Reservation[]>([])
     const [loading, setLoading] = useState<boolean>(true)
-    const [error, setError] = useState<string | null>(null);
+    const [notice, setNotice] = useState<string | null>(null);
 
     // CONTEXT STATES
     const viewContext = useView()
@@ -30,9 +30,9 @@ export const ReservationTable: React.FC = () => {
             try {
                 const data: Reservation[] = await getReservations()
                 setReservations(data)
-                setError("")
+                setNotice("")
             } catch (err: any) {
-                setError(err.response?.data.errorCode || err.code || err.message)
+                setNotice(err.response?.data.noticeCode || err.code || err.message)
             } finally {
                 setLoading(false)
             }
@@ -41,9 +41,9 @@ export const ReservationTable: React.FC = () => {
     }, [])
 
 
-    if (error) {
+    if (notice) {
         return (
-            <Notice notice={error}/>
+            <Notice notice={notice}/>
         )
     }
     if (loading) {

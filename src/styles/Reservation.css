@@ -13,12 +13,10 @@
     margin-right: 15px;
 }
 
-.error {
+.notice {
     margin-top: 15px;
     padding: 10px;
 
-    background-color: rgba(255, 0, 0, 0.316);
-    border: 2px solid rgb(208, 0, 0);
     border-radius: 15px;
 
     display: flex;
@@ -26,7 +24,17 @@
     user-select: none;
 }
 
-.error-icon {
+.error {
+    background-color: rgba(255, 0, 0, 0.316);
+    border: 2px solid rgb(208, 0, 0);
+}
+
+.warning {
+    background-color: rgba(255, 132, 0, 0.316);
+    border: 2px solid rgb(208, 108, 0);
+}
+
+.notice-icon {
     margin-right: 10px;
 }
 

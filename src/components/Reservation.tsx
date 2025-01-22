@@ -18,7 +18,7 @@ export const Reservation: React.FC = () => {
     const endDatetime = reservationContext?.endDatetime
     const setEndDatetime = reservationContext?.setEndDatetime
     const loading = reservationContext?.loading
-    const reservationError = reservationContext?.error
+    const reservationNotice = reservationContext?.notice
     const fetchedReservation = reservationContext?.fetchedReservation
     if (!setTitle) {
         throw new Error("setTitle is undefined")
@@ -41,8 +41,8 @@ export const Reservation: React.FC = () => {
         }
     }, [startDatetime, endDatetime])
 
-    if (reservationError === 'ERR_NETWORK' || reservationError === 'reservation-fetch-failed') {
-        return (<div>{reservationError ? <Notice notice={reservationError} /> : null}</div>)
+    if (reservationNotice === 'ERR_NETWORK' || reservationNotice === 'reservation-fetch-failed') {
+        return (<div>{reservationNotice ? <Notice notice={reservationNotice} /> : null}</div>)
     }
 
     return (
@@ -102,7 +102,7 @@ export const Reservation: React.FC = () => {
                     </div> : null
                 }
             </div>
-            {reservationError ? <Notice notice={reservationError} /> : null}
+            {reservationNotice ? <Notice notice={reservationNotice} /> : null}
         </div>
     )
 }

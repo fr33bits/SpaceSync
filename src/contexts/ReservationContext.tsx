@@ -19,8 +19,8 @@ interface ReservationContextType {
 
     loading: boolean,
     setLoading?: React.Dispatch<React.SetStateAction<boolean>>;
-    error: string,
-    setError?: React.Dispatch<React.SetStateAction<string>>;
+    notice: string,
+    setNotice?: React.Dispatch<React.SetStateAction<string>>;
     changedReservation: boolean,
     setChangedReservation?: React.Dispatch<React.SetStateAction<boolean>>
 
@@ -36,14 +36,25 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const [selectedReservation, setSelectedReservation] = useState<number | undefined>(undefined)
     const [fetchedReservation, setFetchedReservation] = useState<ReservationType | undefined>(undefined)
     const [title, setTitle] = useState<string>("")
-    const [startDatetime, setStartDatetime] = useState<string>(convertToLocalTime(getCurrentDatetime()))
+    const [startDatetime, setStartDatetime] = useState<string>(
+        convertToLocalTime(
+            getFormattedDatetimeFromUNIX(
+                Math.floor(new Date(
+                    convertToLocalTime(getCurrentDatetime())
+                ).getTime() / 1000)
+                + 3600, // default start time: 1 hour from the current time
+                'date_picker-input',
+                false
+            )
+        )
+    )
     const [endDatetime, setEndDatetime] = useState<string>(
         convertToLocalTime(
             getFormattedDatetimeFromUNIX(
                 Math.floor(new Date(
                     convertToLocalTime(getCurrentDatetime())
                 ).getTime() / 1000)
-                + 1200, // default reservation duration: 20 min
+                + 3600 + 1200, // default reservation duration: 20 min
                 'date_picker-input',
                 false
             )
@@ -51,7 +62,7 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
     )
 
     const [loading, setLoading] = useState(true)
-    const [error, setError] = useState("")
+    const [notice, setNotice] = useState("")
     const [changedReservation, setChangedReservation] = useState(false)
 
     // OTHER CONTEXTS
@@ -73,10 +84,10 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
                 const endDatetimeFormatted: string = getFormattedDatetimeFromUNIX(fetchedData.end, 'date_picker-input', false)
                 setStartDatetime(startDatetimeFormatted)
                 setEndDatetime(endDatetimeFormatted)
-                setError("")
+                setNotice("")
             }
         } catch (err: any) {
-            setError(err.response?.data.errorCode || err.code || err.message)
+            setNotice(err.response?.data.noticeCode || err.code || err.message)
         } finally {
             setLoading(false)
         }
@@ -94,14 +105,23 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
     useEffect(() => {
         if (!selectedReservation) { // new reservation or no reservation selected
             setTitle("")
-            setStartDatetime(convertToLocalTime(getCurrentDatetime()))
+            setStartDatetime(convertToLocalTime(
+                getFormattedDatetimeFromUNIX(
+                    Math.floor(new Date(
+                        convertToLocalTime(getCurrentDatetime())
+                    ).getTime() / 1000)
+                    + 3600, // default start time: 1 hour from the current time
+                    'date_picker-input',
+                    false
+                )
+            ))
             setEndDatetime(
                 convertToLocalTime(
                     getFormattedDatetimeFromUNIX(
                         Math.floor(new Date(
                             convertToLocalTime(getCurrentDatetime())
                         ).getTime() / 1000)
-                        + 1200, // min. reservation duration: 5 min
+                        + 3600 + 1200, // min. reservation duration: 5 min
                         'date_picker-input',
                         false
                     )
@@ -115,7 +135,13 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
     // runs on every change in data
     useEffect(() => {
-        setError(reservationStaticValidator(title, toUNIXSeconds(startDatetime), toUNIXSeconds(endDatetime)))
+        setNotice(reservationStaticValidator(
+            title,
+            toUNIXSeconds(startDatetime),
+            toUNIXSeconds(endDatetime),
+            selectedView === 'reservation-new' ? true : false,
+            true)
+        )
 
         if (fetchedReservation) {
             if (
@@ -138,9 +164,9 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
             setTitle(fetchedReservation.title)
             setStartDatetime(getFormattedDatetimeFromUNIX(fetchedReservation.start, 'date_picker-input', false))
             setEndDatetime(getFormattedDatetimeFromUNIX(fetchedReservation.end, 'date_picker-input', false))
-            setError("")
+            setNotice("")
         } else {
-            setError("287304")
+            setNotice("287304")
         }
     }
 
@@ -164,16 +190,16 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
                 })
 
                 // ! alternative error handling implmentation with custom error response (chosen the other one because it's simpler):
-                // if ('errorCode' in response) { // checks if the response is an error
-                //     setError(response)
+                // if ('noticeCode' in response) { // checks if the response is an error
+                //     setNotice(response)
                 // }
 
                 setSelectedReservation(response.id)
                 setSelectedView('reservation-existing')
             }
-            setError("")
+            setNotice("")
         } catch (err: any) {
-            setError(err.response?.data.errorCode || err.code || err.message)
+            setNotice(err.response?.data.noticeCode || err.code || err.message)
         } finally {
             setLoading(false)
         }
@@ -190,7 +216,7 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
                     setSelectedView('table')
                 }
             } catch (err: any) {
-                setError(err.response?.data.errorCode || err.code || err.message)
+                setNotice(err.response?.data.noticeCode || err.code || err.message)
             } finally {
                 setLoading(false)
             }
@@ -208,7 +234,7 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setEndDatetime,
         fetchedReservation,
         loading,
-        error,
+        notice,
         changedReservation,
         handleDelete,
         handleSubmit,

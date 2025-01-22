@@ -1,14 +1,14 @@
 import { db } from '../app.ts'
 import express from 'express'
-import { getErrorMessage, reservationStaticValidator } from '../../src/functions/common.ts'
+import { getNoticeDetails, reservationStaticValidator } from '../../src/functions/common.ts'
 
 const reservations = (req: express.Request, res: express.Response) => {
     db.query('SELECT * FROM reservations', (err, results) => {
         if (err) {
             console.error(err);
             res.status(500).json({
-                errorCode: 'reservations-fetch-failed',
-                message: getErrorMessage('reservations-fetch-failed', true, 'en')
+                noticeCode: 'reservations-fetch-failed',
+                message: getNoticeDetails('reservations-fetch-failed', true, 'en')
             });
         } else {
             res.json(results);
@@ -22,8 +22,8 @@ const reservation = (req: express.Request, res: express.Response) => {
         if (err) {
             console.error(err);
             res.status(500).json({
-                errorCode: 'reservation-fetch-failed',
-                message: getErrorMessage('reservation-fetch-failed', true, 'en')
+                noticeCode: 'reservation-fetch-failed',
+                message: getNoticeDetails('reservation-fetch-failed', true, 'en')
             });
         } else {
             res.json(results);
@@ -34,16 +34,16 @@ const reservation = (req: express.Request, res: express.Response) => {
 const newReservation = async (req: express.Request, res: express.Response) => {
     const { title, start, end } = req.body;
 
-    const staticValidationResult = reservationStaticValidator(title, start, end)
+    const staticValidationResult = reservationStaticValidator(title, start, end, false, false)
     if (staticValidationResult) {
         res.status(400).json({
-            errorCode: staticValidationResult,
-            message: getErrorMessage(staticValidationResult, true, 'en')
+            noticeCode: staticValidationResult,
+            message: getNoticeDetails(staticValidationResult, true, 'en')
         })
     } else if (await isOccupied(undefined, start, end, undefined) != false) {
         res.status(409).json({ // 409 HTTP error code
-            errorCode: 'time_period-occupied',
-            message: getErrorMessage('time_period-occupied', true, 'en')
+            noticeCode: 'time_period-occupied',
+            message: getNoticeDetails('time_period-occupied', true, 'en')
         })
     } else {
         db.query(
@@ -53,8 +53,8 @@ const newReservation = async (req: express.Request, res: express.Response) => {
                 if (err) {
                     console.error(err);
                     res.status(500).json({
-                        errorCode: 'reservation-add-failed',
-                        message: getErrorMessage('reservation-add-failed', true, 'en')
+                        noticeCode: 'reservation-add-failed',
+                        message: getNoticeDetails('reservation-add-failed', true, 'en')
                     });
                 } else {
                     res.status(201).json({ message: 'Reservation added', id: result.insertId });
@@ -67,16 +67,16 @@ const newReservation = async (req: express.Request, res: express.Response) => {
 const updateReservation = async (req: express.Request, res: express.Response) => {
     const { title, start, end, id } = req.body;
 
-    const staticValidationResult = reservationStaticValidator(title, start, end)
+    const staticValidationResult = reservationStaticValidator(title, start, end, false, false)
     if (staticValidationResult) {
         res.status(400).json({
-            errorCode: staticValidationResult,
-            message: getErrorMessage(staticValidationResult, true, 'en')
+            noticeCode: staticValidationResult,
+            message: getNoticeDetails(staticValidationResult, true, 'en')
         })
     } else if (await isOccupied(undefined, start, end, id) != false) {
         res.status(409).json({ // 409 HTTP error code
-            errorCode: 'time_period-occupied',
-            message: getErrorMessage('time_period-occupied', true, 'en')
+            noticeCode: 'time_period-occupied',
+            message: getNoticeDetails('time_period-occupied', true, 'en')
         })
     } else {
         db.query(
@@ -86,8 +86,8 @@ const updateReservation = async (req: express.Request, res: express.Response) =>
                 if (err) {
                     console.error(err);
                     res.status(500).json({
-                        errorCode: 'reservation-update-failed',
-                        message: getErrorMessage('reservation-update-failed', true, 'en')
+                        noticeCode: 'reservation-update-failed',
+                        message: getNoticeDetails('reservation-update-failed', true, 'en')
                     });
                 } else {
                     res.status(201).json({ message: 'Reservation updated' });
@@ -103,8 +103,8 @@ const deleteReservation = (req: express.Request, res: express.Response) => {
         if (err) {
             console.error(err);
             res.status(500).json({
-                errorCode: 'reservation-delete-failed',
-                message: getErrorMessage('reservation-delete-failed', true, 'en')});
+                noticeCode: 'reservation-delete-failed',
+                message: getNoticeDetails('reservation-delete-failed', true, 'en')});
         } else {
             res.json({ message: 'Reservation deleted' });
         }

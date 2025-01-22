@@ -99,6 +99,7 @@ DB_PASSWORD=<your_mysql_server_password>
 - Validation is done both on the client and the server with the exception of checking if there's already a reservation for a particular time period, which is only done on the server.
 - The title has a maximum character length of 300.
 - The title cannot be empty and that is enforced both on the side of the client and the API server.
+- The default reservation start time is set at 1 hour from the current time.
 - The duration of a reservation must be at least 5 minutes long.
 - The duration of a reservation must not exceed 1 day.
 - Reservation default start time is the current time and the duration and end time are set to 20 minutes (from the start time).
