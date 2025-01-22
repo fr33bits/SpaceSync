@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { durationFromFormatted, durationHHMM } from '../functions/datetime'
+import { durationFromFormatted, durationHHMM, getFormattedDatetimeFromUNIX } from '../functions/datetime'
 
 import { Notice } from "./Notice.tsx"
 import { useReservation } from "../contexts/ReservationContext.tsx"
@@ -19,6 +19,7 @@ export const Reservation: React.FC = () => {
     const setEndDatetime = reservationContext?.setEndDatetime
     const loading = reservationContext?.loading
     const reservationError = reservationContext?.error
+    const fetchedReservation = reservationContext?.fetchedReservation
     if (!setTitle) {
         throw new Error("setTitle is undefined")
     }
@@ -41,7 +42,7 @@ export const Reservation: React.FC = () => {
     }, [startDatetime, endDatetime])
 
     if (reservationError === 'ERR_NETWORK' || reservationError === 'reservation-fetch-failed') {
-        return (<div>{reservationError ? <Notice notice={reservationError}/> : null}</div>)
+        return (<div>{reservationError ? <Notice notice={reservationError} /> : null}</div>)
     }
 
     return (
@@ -58,10 +59,10 @@ export const Reservation: React.FC = () => {
                         value={title} onChange={(e) => setTitle(e.target.value)}
                     />
                 </div>
-                <br/>
+                <br />
                 <div>
                     <div className="reservation-form-duration-item">
-                        <label htmlFor="datetime-start">Start date and time</label><br/>
+                        <label htmlFor="datetime-start">Start date and time</label><br />
                         <input
                             type="datetime-local"
                             id="datetime-start"
@@ -86,10 +87,22 @@ export const Reservation: React.FC = () => {
                         </div> : null
                     }
                 </div>
-                <br/>
+                <br />
                 <p>Please note that the date and time selected are in your local time (as reported by the browser) however they are saved into the database with the timezone data in order to ensure consistency between timezones</p>
+                <br />
+                {fetchedReservation?.created_at ?
+                    <div>
+                        Created at: {getFormattedDatetimeFromUNIX(fetchedReservation.created_at, 'local', true)}
+                        <span className="updated">
+                            {fetchedReservation.last_modified_at ?
+                                ` Last updated: ${getFormattedDatetimeFromUNIX(fetchedReservation.last_modified_at, 'local', true)}`
+                                : null
+                            }
+                        </span>
+                    </div> : null
+                }
             </div>
-            {reservationError ? <Notice notice={reservationError}/> : null}
+            {reservationError ? <Notice notice={reservationError} /> : null}
         </div>
     )
 }

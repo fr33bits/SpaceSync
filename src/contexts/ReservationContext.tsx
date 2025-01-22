@@ -15,6 +15,7 @@ interface ReservationContextType {
     setStartDatetime: React.Dispatch<React.SetStateAction<string>>;
     endDatetime: string | undefined;
     setEndDatetime: React.Dispatch<React.SetStateAction<string>>;
+    fetchedReservation: ReservationType | undefined
 
     loading: boolean,
     setLoading?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -205,6 +206,7 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setStartDatetime,
         endDatetime,
         setEndDatetime,
+        fetchedReservation,
         loading,
         error,
         changedReservation,
