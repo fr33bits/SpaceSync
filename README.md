@@ -10,7 +10,7 @@ SpaceSync is a room reservation and scheduling app. It's an SPA based on React a
 
 ## Set-up
 
-Tested on: Windows 10 and 11, macOS 14, Kali Linux
+Tested on: Windows 10 and 11, macOS 14
 
 ### Prerequisites
 
