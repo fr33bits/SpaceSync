@@ -3,5 +3,10 @@
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ]
+  ],
+  // had to be added so that "from './datetime.ts'" could be used with the extension in validations.ts without the inclusion or exclusion of the extension triggering an error in validation.test.ts or when running 'npm start'
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  }
 }

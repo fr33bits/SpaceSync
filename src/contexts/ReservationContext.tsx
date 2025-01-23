@@ -5,7 +5,7 @@ import { Reservation as ReservationType } from '../../common/types'
 
 import { ReservationContext, ReservationContextType } from './ReservationContext.ts';
 import React, { useState, useEffect, useCallback } from 'react'
-import { getCurrentDatetime, convertToLocalTime, getFormattedDatetimeFromUNIX, toUNIXSeconds } from '../../common/datetime'
+import { getCurrentDatetime, convertToLocalTime, getFormattedDatetimeFromUNIX, toUNIXSeconds } from '../../common/datetime.ts'
 
 import { useView } from '../contexts/ViewContext'
 import { reservationStaticValidator } from '../../common/validation';

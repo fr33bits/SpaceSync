@@ -1,4 +1,4 @@
-import { durationFromUNIX, getCurrentDatetime, toUNIXSeconds } from "./datetime";
+import { durationFromUNIX, getCurrentDatetime, toUNIXSeconds } from './datetime.ts'
 
 export const reservationStaticValidator = (title: string | undefined, startDatetime: number, endDatetime: number, newReservation: boolean | void, includeWarnings: boolean | void): string => {
     // ERRORS

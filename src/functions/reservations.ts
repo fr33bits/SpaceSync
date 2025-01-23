@@ -15,6 +15,7 @@ export const getReservations = async (): Promise<Reservation[]> => {
         const data: Reservation[] = response.data
         return data
     } catch (error) {
+        console.log("ERROR: ", error)
         if (axios.isAxiosError(error)) {
             console.log("Axios error: ", error.response?.data.error || error.message)
 
