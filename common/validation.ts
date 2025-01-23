@@ -1,4 +1,4 @@
-import { durationFromUNIX, getCurrentDatetime, toUNIXSeconds } from "./datetime.ts";
+import { durationFromUNIX, getCurrentDatetime, toUNIXSeconds } from "./datetime";
 
 export const reservationStaticValidator = (title: string | undefined, startDatetime: number, endDatetime: number, newReservation: boolean | void, includeWarnings: boolean | void): string => {
     // ERRORS
@@ -14,12 +14,13 @@ export const reservationStaticValidator = (title: string | undefined, startDatet
     if (title.length > 300) {
         return 'title-exceeded-max'
     }
-    if (!startDatetime) {
-        return 'startDatetime-undefined'
-    }
-    if (!endDatetime) {
-        return 'endDatetime-undefined'
-    }
+    // These are unnessary as TypeScript ensures that they are both defined numbers
+    // if (!startDatetime) {
+    //     return 'startDatetime-undefined'
+    // }
+    // if (!endDatetime) {
+    //     return 'endDatetime-undefined'
+    // }
     if (endDatetime < startDatetime) {
         return 'datetime-inverted'
     }

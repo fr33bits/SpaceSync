@@ -116,5 +116,9 @@ DB_PASSWORD=<your_mysql_server_password>
 - The duration of a reservation must be at least 5 minutes long.
 - The duration of a reservation must not exceed 1 day.
 
+## Testing
+
+You can test the code by running unit tests using the command `npm test`.
+
 [^1]: Warning: Windows may alter non-ASCII characters (e.g. š, č, ž) upon pasting into the Command Prompt or similar.
 [^2]: There is presently no functional difference (in terms of the app itself) between the developer and production modes.

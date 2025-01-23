@@ -8,7 +8,7 @@ import mysql2 from 'mysql2';
 // !!! without 'type' running `node app.ts` throws an error: "SyntaxError: The requested module '../../common/types.ts' does not provide an export named 'Reservation'"
 // import { type Reservation } from '../../common/types.ts'
 
-const reservations = (req: express.Request, res: express.Response) => {
+export const reservations = (req: express.Request, res: express.Response) => {
     db.query('SELECT * FROM reservations',
         (err: mysql2.QueryError | null, result: mysql2.ResultSetHeader) => {
             if (err) {
