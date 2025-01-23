@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "ts-node app.ts"
+    "start": "node ./api/app.ts"
   },
   "dependencies": {
     "axios": "^1.7.9",

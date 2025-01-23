@@ -1,15 +1,26 @@
 import express from 'express'
 import cors from 'cors'
 import mysql from 'mysql2'
+
+// LOADING ENVIRONMENT VARIABLES
+// merely dotenv.config({path: '../.env'}) is not enough when running 'npm start' instead of 'node app.ts' (from the 'api' directory) because it does not correctly load in enviroment variables
+import path from 'path';
+import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
-dotenv.config({ path: '../.env' })
+
+// Construct __dirname equivalent in ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load .env
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 // DATABASE
 export const db = mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
+    database: process.env.DB_NAME,
 })
 
 db.connect(err => {
