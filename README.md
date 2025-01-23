@@ -14,7 +14,9 @@ Tested on: Windows 10, macOS 14
 
 ### Prerequisites
 
-- You must have [Node](https://nodejs.org/en) installed, **preferably v23.6 or later** (in order to be able to run TypeScript code natively without having to use the `--experimental-strip-types` option)
+- You must have [Node.js](https://nodejs.org/en) installed, **preferably v23.6 or later** as it has native (though experimental) support for TypeScript.
+  - `npm` scripts (including `start`) are run with the `--experimental-strip-types` option irrespective of the Node.js version for compatibility with older versions.
+  - If you keep experiencing issues, please update to Node.js v23.6 or later.
 - You must have [MySQL Community Server](https://dev.mysql.com/downloads/) installed.
 - The MySQL database must be set up with the root account (username `root`) and your chosen password (which you'll need in later steps).
   - In case this is needed for troubleshooting purposes, the default port for MySQL installations is 3306.
@@ -33,6 +35,8 @@ Tested on: Windows 10, macOS 14
 
 ### Setting up the database
 
+#### Manual set-up in CLI
+
 1. In the CLI, first enter the MySQL server using the command `mysql -u root -p` and then, when prompted, enter the server password.
 2. Create a new database for this project: `CREATE DATABASE spacesync_db;`
 3. Enter the database: `USE spacesync_db;`
@@ -49,7 +53,7 @@ CREATE TABLE reservations (
 );
 ```
 
-5. Optionally, you can also insert test data (or create it yourself later in the app):
+5. Optionally, you can also insert test data (or create it yourself later in the app)[^1]:
 
 ```sql
 INSERT INTO reservations (title, start, end, created_at, last_modified_at)
@@ -57,11 +61,11 @@ VALUES
   ('Planiranje strežniške arhitekture', 1737100800, 1737103500, 1737101524, NULL),
   ('Predstavitev finančnega poročila za prejšnji kvartal', 1737103500, 1737105300, 1737099059, 1737101512),
   ('Marketinški brainstorming', 1737112500, 1737114600, 1737108870, NULL);
-
--- Warning: Windows may alter non-ASCII characters (e.g. š, č, ž) upon pasting into the Command Prompt or similar
 ```
 
-Alternatively, you can create the same database in MySQL Workbench.
+#### Manual set-up in MySQL Workbench
+
+Alternatively, you can create the same database in MySQL Workbench using the same commands from steps 2-5 as in the 'Manual set-up in CLI' method.
 
 ### Setting the envionment variables
 
@@ -69,7 +73,7 @@ In this case the environment variables will be set for a product environment. Po
 
 1. Change your working directory to the project root directory (if you're not there already)
 2. Create a new `.env` file that will hold your environment variables (e.g. run the `touch .env` command).
-3. Inside the `.env` paste the following and replace `<your_mysql_server_password>` with your MySQL server password and `<node_environment>` with the mode (`production` or `development` that you want to start the project in):
+3. Inside the `.env` paste the following and replace `<your_mysql_server_password>` with your MySQL server password and `<node_environment>` with the mode (`production` or `development` that you want to start the project in[^2]):
 
 ```env
 NODE_ENV=<node_environment>
@@ -83,14 +87,13 @@ DB_PASSWORD=<your_mysql_server_password>
 
 ### Run the server
 
-1. Move into the `api` directory: `cd api`
-2. Run `node app.ts` (`node --experimental-strip-types app.ts` if not on Node v23.6 or above). You should get a message saying that the app started on a certain port and is connected to the MySQL database.
-  - If this doesn't work, try globally installing `ts-node` with the command `npm install -g ts-node` and then rerunning the original command.
+1. Run `npm start` inside one of the project directories (including any project root subdirectories).
+2. You should get a message saying that the app started on a certain port and is connected to the MySQL database. If you get an error or otherwise have issues running TypeScript code (`app.ts`) on Node.js.
 
 ### Start the front-end
 
 1. Change your working directory to the project root directory (if you're not there already)
-2. Depending on which environment your want to start the front end in, run the following commands:
+2. Depending on which environment your want to start the front end in, run the following commands[^2]:
   - `npm run dev` for developer mode
   - `npm run build` and then `npm run preview` for production mode
 
@@ -103,3 +106,7 @@ DB_PASSWORD=<your_mysql_server_password>
 - The default reservation end time is set 20 minutes from reservation start time.
 - The duration of a reservation must be at least 5 minutes long.
 - The duration of a reservation must not exceed 1 day.
+
+[^1]: Warning: Windows may alter non-ASCII characters (e.g. š, č, ž) upon pasting into the Command Prompt or similar.
+
+[^2]: There is presently no functional difference (in terms of the app itself) between the developer and production modes.
