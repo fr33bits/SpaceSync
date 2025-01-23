@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useContext } from "react"
 import { durationFromFormatted, durationHHMM, getFormattedDatetimeFromUNIX } from '../../common/datetime.ts'
 
 import { Notice } from "./Notice.tsx"
-import { useReservation } from "../contexts/ReservationContext.tsx"
+import { ReservationContext } from '../contexts/ReservationContext.ts';
 import '../styles/Reservation.css'
 
 export const Reservation: React.FC = () => {
@@ -10,16 +10,17 @@ export const Reservation: React.FC = () => {
     const [duration, setDuration] = useState<string>()
 
     // CONTEXT STATES
-    const reservationContext = useReservation()
-    const title = reservationContext?.title
-    const setTitle = reservationContext?.setTitle
-    const startDatetime = reservationContext?.startDatetime
-    const setStartDatetime = reservationContext?.setStartDatetime
-    const endDatetime = reservationContext?.endDatetime
-    const setEndDatetime = reservationContext?.setEndDatetime
-    const loading = reservationContext?.loading
-    const reservationNotice = reservationContext?.notice
-    const fetchedReservation = reservationContext?.fetchedReservation
+    const { 
+        title, 
+        setTitle, 
+        startDatetime, 
+        setStartDatetime, 
+        endDatetime, 
+        setEndDatetime, 
+        loading, 
+        notice: reservationNotice, 
+        fetchedReservation 
+    } = useContext(ReservationContext) || {};
     if (!setTitle) {
         throw new Error("setTitle is undefined")
     }

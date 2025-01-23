@@ -1,14 +1,15 @@
 import axios from 'axios'
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import { durationHHMM, getFormattedDatetimeFromUNIX } from "../../common/datetime"
 import { getReservations } from "../functions/reservations"
 import { Reservation } from '../../common/types.ts'
+import { ReservationContext } from '../contexts/ReservationContext.ts';
+
 
 import '../styles/ReservationTable.css'
 
 import { Notice } from "./Notice"
 import { useView } from "../contexts/ViewContext"
-import { useReservation } from "../contexts/ReservationContext"
 
 export const ReservationTable: React.FC = () => {
     // COMPONENT STATES
@@ -19,7 +20,7 @@ export const ReservationTable: React.FC = () => {
     // CONTEXT STATES
     const viewContext = useView()
     const setSelectedView = viewContext?.setSelectedView
-    const reservationContext = useReservation()
+    const reservationContext = useContext(ReservationContext)
     const setSelectedReservation = reservationContext?.setSelectedReservation
     if (!setSelectedView) {
         throw new Error("setSelectedView is undefined")

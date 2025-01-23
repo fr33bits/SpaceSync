@@ -23,7 +23,7 @@ export const getNoticeDetails = (notice_code: string, capitalize: boolean, langu
                 capitalizable: true,
                 type: 'error',
                 languages: {
-                    en: "there's already a reservation for this time period",
+                    en: "there's already a reservation in this time period",
                     sl: "za ta časovni okvir že obstaja rezervacija"
                 }
             }

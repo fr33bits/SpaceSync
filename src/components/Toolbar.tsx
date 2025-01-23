@@ -1,6 +1,8 @@
+import { useContext } from 'react';
 import { useView } from '../contexts/ViewContext.tsx'
-import { useReservation } from '../contexts/ReservationContext.tsx'
 import { getNoticeDetails } from '../../common/notices'
+import { ReservationContext } from '../contexts/ReservationContext';
+
 
 import '../styles/Toolbar.css'
 
@@ -9,14 +11,15 @@ export const Toolbar = () => {
     const viewContext = useView()
     const selectedView = viewContext?.selectedView
     const setSelectedView = viewContext?.setSelectedView
-    const reservationContext = useReservation()
-    const setSelectedReservation = reservationContext?.setSelectedReservation
-    const changedReservation = reservationContext?.changedReservation
-    const handleDelete = reservationContext?.handleDelete
-    const discardChanges = reservationContext?.discardChanges
-    const handleSubmit = reservationContext?.handleSubmit
-    const reservationNotice = reservationContext?.notice
-    const setDefaultReservationFormData = reservationContext?.setDefaultReservationFormData
+    const { 
+        setSelectedReservation, 
+        changedReservation, 
+        handleDelete, 
+        discardChanges, 
+        handleSubmit, 
+        notice: reservationNotice,
+        setDefaultReservationFormData, 
+    } = useContext(ReservationContext) || {};
     if (!setSelectedView) {
         throw new Error("setSelectedView is undefined")
     }
@@ -25,6 +28,15 @@ export const Toolbar = () => {
     }
     if (!setDefaultReservationFormData) {
         throw new Error("setDefaultReservationFormData is undefined")
+    }
+    if (!handleDelete) {
+        throw new Error("handleDelete is undefined")
+    }
+    if (!discardChanges) {
+        throw new Error("discardChanges is undefined")
+    }
+    if (!handleSubmit) {
+        throw new Error("handleSubmit is undefined")
     }
 
     const exitReservation = () => {

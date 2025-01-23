@@ -3,37 +3,12 @@ import { getReservation, ApiResponse, createReservation, updateReservation, dele
 
 import { Reservation as ReservationType } from '../../common/types'
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { ReservationContext, ReservationContextType } from './ReservationContext.ts';
+import React, { useState, useEffect, useCallback } from 'react'
 import { getCurrentDatetime, convertToLocalTime, getFormattedDatetimeFromUNIX, toUNIXSeconds } from '../../common/datetime'
 
 import { useView } from '../contexts/ViewContext'
 import { reservationStaticValidator } from '../../common/validation';
-
-interface ReservationContextType {
-    selectedReservation: number | undefined
-    setSelectedReservation: React.Dispatch<React.SetStateAction<number | undefined>>
-    title: string
-    setTitle: React.Dispatch<React.SetStateAction<string>>
-    startDatetime: string | undefined
-    setStartDatetime: React.Dispatch<React.SetStateAction<string>>
-    endDatetime: string | undefined
-    setEndDatetime: React.Dispatch<React.SetStateAction<string>>
-    fetchedReservation: ReservationType | undefined
-
-    loading: boolean
-    setLoading?: React.Dispatch<React.SetStateAction<boolean>>
-    notice: string
-    setNotice?: React.Dispatch<React.SetStateAction<string>>
-    changedReservation: boolean
-    setChangedReservation?: React.Dispatch<React.SetStateAction<boolean>>
-    setDefaultReservationFormData: React.Dispatch<React.SetStateAction<void>>
-
-    handleDelete: () => Promise<void>
-    handleSubmit: () => Promise<void>
-    discardChanges: () => void
-}
-
-const ReservationContext = createContext<ReservationContextType | null>(null)
 
 export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     // MAINTAINED STATES
@@ -268,5 +243,3 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
         </ReservationContext.Provider>
     )
 }
-
-export const useReservation = () => useContext(ReservationContext)
