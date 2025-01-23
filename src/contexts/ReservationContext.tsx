@@ -3,7 +3,7 @@ import { getReservation, ApiResponse, createReservation, updateReservation, dele
 
 import { Reservation as ReservationType } from '../../common/types'
 
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { getCurrentDatetime, convertToLocalTime, getFormattedDatetimeFromUNIX, toUNIXSeconds } from '../../common/datetime'
 
 import { useView } from '../contexts/ViewContext'
@@ -78,7 +78,7 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
 
     // FUNCTIONS
-    const fetchReservation = async () => {
+    const fetchReservation = useCallback(async () => {
         try {
             if (selectedReservation) {
                 const fetchedData: ReservationType = await getReservation(selectedReservation)
@@ -99,7 +99,7 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
         } finally {
             setLoading(false)
         }
-    }
+    }, [selectedReservation])
 
     // UPDATE VIEWS
     // on load
@@ -107,7 +107,7 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
         if (selectedView === 'reservation-new') {
             setSelectedReservation(undefined)
         }
-    }, [selectedReservation])
+    }, [selectedReservation, selectedView])
 
     const setDefaultReservationFormData = () => {
         setTitle("")
@@ -143,7 +143,7 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
         // existing reservation
         fetchReservation()
-    }, [selectedReservation])
+    }, [selectedReservation, fetchReservation])
 
     // runs on every change in data
     useEffect(() => {
@@ -168,7 +168,7 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
         } else {
             setChangedReservation(false)
         }
-    }, [fetchedReservation, title, startDatetime, endDatetime])
+    }, [fetchedReservation, title, startDatetime, endDatetime, selectedView])
 
     // ACTIONS
     const discardChanges = () => {
@@ -243,7 +243,7 @@ export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ c
         }
     }
 
-    let values: ReservationContextType = {
+    const values: ReservationContextType = {
         selectedReservation,
         setSelectedReservation,
         title,

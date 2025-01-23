@@ -30,16 +30,16 @@ export const Reservation: React.FC = () => {
         throw new Error("setEndDatetime is undefined")
     }
 
-    if (loading) {
-        return (<div>Loading...</div>)
-    }
-
     useEffect(() => {
         if (startDatetime && endDatetime) {
             const durationSec: number = durationFromFormatted(startDatetime, endDatetime)
             setDuration(durationHHMM(durationSec))
         }
     }, [startDatetime, endDatetime])
+
+    if (loading) {
+        return (<div>Loading...</div>)
+    }
 
     if (reservationNotice === 'ERR_NETWORK' || reservationNotice === 'reservation-fetch-failed') {
         return (<div>{reservationNotice ? <Notice notice={reservationNotice} /> : null}</div>)

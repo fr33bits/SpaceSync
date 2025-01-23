@@ -1,5 +1,3 @@
-// ! cannot be imported into /api/controllers/reservations.ts for some reason
-
 export interface Reservation {
     id?: number,
     title: string,

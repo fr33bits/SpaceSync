@@ -4,6 +4,10 @@ import { getNoticeDetails } from '../../common/notices.ts'
 import { reservationStaticValidator } from '../../common/validation.ts'
 import mysql2 from 'mysql2';
 
+// Notes on importing types:
+// !!! without 'type' running `node app.ts` throws an error: "SyntaxError: The requested module '../../common/types.ts' does not provide an export named 'Reservation'"
+// import { type Reservation } from '../../common/types.ts'
+
 const reservations = (req: express.Request, res: express.Response) => {
     db.query('SELECT * FROM reservations',
         (err: mysql2.QueryError | null, result: mysql2.ResultSetHeader) => {
@@ -85,7 +89,7 @@ const updateReservation = async (req: express.Request, res: express.Response) =>
         db.query(
             'UPDATE reservations SET title = ?, start = ?, end = ?, last_modified_at = UNIX_TIMESTAMP() WHERE id = ?',
             [title, start, end, id],
-            (err: mysql2.QueryError | null, result: mysql2.ResultSetHeader) => {
+            (err: mysql2.QueryError | null) => {
                 if (err) {
                     console.error(err);
                     res.status(500).json({
@@ -102,7 +106,7 @@ const updateReservation = async (req: express.Request, res: express.Response) =>
 
 const deleteReservation = (req: express.Request, res: express.Response) => {
     const { id } = req.params;
-    db.query('DELETE FROM reservations WHERE id = ?', [id], (err: mysql2.QueryError | null, result: mysql2.ResultSetHeader) => {
+    db.query('DELETE FROM reservations WHERE id = ?', [id], (err: mysql2.QueryError | null) => {
         if (err) {
             console.error(err);
             res.status(500).json({
