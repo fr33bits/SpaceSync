@@ -10,7 +10,7 @@ SpaceSync is a room reservation and scheduling app. It's an SPA based on React a
 
 ## Set-up
 
-Tested on: Windows 10, macOS 14
+Tested on: Windows 10 and 11, macOS 14, Kali Linux
 
 ### Prerequisites
 
@@ -37,11 +37,11 @@ Tested on: Windows 10, macOS 14
 
 There are three ways of setting up the database:
 
-#### Automatic set-up using npm command
+#### Automatic set-up using an `npm` command
 
 Note: this method intentionally erases all previous data from the `reservations` table.
 
-1. Run `npm run setup-db` inside one of the project directories (including any project root subdirectories).
+1. Run the `npm run setup-db` command inside one of the project directories (including any project root subdirectories).
 2. If you get the message `Database setup complete!`, then the database set-up was sucessful.
 
 #### Manual set-up in CLI
@@ -94,7 +94,7 @@ DB_NAME=spacesync_db
 DB_PASSWORD=<your_mysql_server_password>
 ```
 
-### Run the API server
+### Start the API server
 
 1. Run `npm start` inside one of the project directories (including any project root subdirectories).
 2. You should get a message saying that the app started on a certain port and is connected to the MySQL database. If you get an error or otherwise have issues running TypeScript code (`app.ts`) on Node.js.

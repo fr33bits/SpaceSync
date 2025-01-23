@@ -51,7 +51,7 @@ const setupDatabase = async () => {
             console.log(`Created 'reservations' table`);
         } catch (error) {
             if (error.code === 'ER_TABLE_EXISTS_ERROR') {
-                console.log(`'reservations' table already exists; skipping to next step`);
+                console.log(`The table 'reservations' already exists; skipping to next step`);
             } else {
                 throw error;
             }
