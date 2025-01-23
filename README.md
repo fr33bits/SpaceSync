@@ -35,6 +35,15 @@ Tested on: Windows 10, macOS 14
 
 ### Setting up the database
 
+There are three ways of setting up the database:
+
+#### Automatic set-up using npm command
+
+Note: this method intentionally erases all previous data from the `reservations` table.
+
+1. Run `npm run setup-db` inside one of the project directories (including any project root subdirectories).
+2. If you get the message `Database setup complete!`, then the database set-up was sucessful.
+
 #### Manual set-up in CLI
 
 1. In the CLI, first enter the MySQL server using the command `mysql -u root -p` and then, when prompted, enter the server password.
@@ -85,7 +94,7 @@ DB_NAME=spacesync_db
 DB_PASSWORD=<your_mysql_server_password>
 ```
 
-### Run the server
+### Run the API server
 
 1. Run `npm start` inside one of the project directories (including any project root subdirectories).
 2. You should get a message saying that the app started on a certain port and is connected to the MySQL database. If you get an error or otherwise have issues running TypeScript code (`app.ts`) on Node.js.
@@ -108,5 +117,4 @@ DB_PASSWORD=<your_mysql_server_password>
 - The duration of a reservation must not exceed 1 day.
 
 [^1]: Warning: Windows may alter non-ASCII characters (e.g. š, č, ž) upon pasting into the Command Prompt or similar.
-
 [^2]: There is presently no functional difference (in terms of the app itself) between the developer and production modes.
