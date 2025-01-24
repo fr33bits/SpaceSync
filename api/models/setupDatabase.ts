@@ -1,4 +1,5 @@
 import * as mysql from 'mysql2/promise'; // Import all named (instead of default) exports as an object
+import { logger } from '../logger.ts';
 
 import path from 'path';
 import dotenv from 'dotenv';
@@ -23,11 +24,11 @@ export const setupDatabase = async () => {
 
         // Create database if it doesn't exist
         await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbConfig.database}\``);
-        console.log(`Database ${dbConfig.database} created (if it didn't already exist)`);
+        logger.info(`Database ${dbConfig.database} created (if it didn't already exist)`);
 
         // Connect to the database
         await connection.changeUser({ database: dbConfig.database });
-        console.log(`Switched to ${dbConfig.database} database`);
+        logger.info(`Switched to ${dbConfig.database} database`);
 
         // Create tables
         try {
@@ -41,10 +42,10 @@ export const setupDatabase = async () => {
                     last_modified_at BIGINT
                 );
             `);
-            console.log(`Created 'reservations' table`);
+            logger.info(`Created 'reservations' table`);
         } catch (error) {
             if (error.code === 'ER_TABLE_EXISTS_ERROR') {
-                console.log(`The table 'reservations' already exists; skipping to next step`);
+                logger.info(`The table 'reservations' already exists; skipping to next step`);
             } else {
                 throw error;
             }
@@ -52,7 +53,7 @@ export const setupDatabase = async () => {
 
         // Clear table data before inserting new test data
         await connection.query(`TRUNCATE TABLE reservations`);
-        console.log(`Deleted all data from 'reservations' before inserting the test data`);
+        logger.info(`Deleted all data from 'reservations' before inserting the test data`);
 
         // Insert test data
         await connection.query(`
@@ -62,13 +63,13 @@ export const setupDatabase = async () => {
                 ('Predstavitev finančnega poročila za prejšnji kvartal', 1737103500, 1737105300, 1737099059, 1737101512),
                 ('Marketinški brainstorming', 1737112500, 1737114600, 1737108870, NULL);
         `);
-        console.log(`Inserted test data into the 'reservations' table`);
+        logger.info(`Inserted test data into the 'reservations' table`);
 
-        console.log('Database setup complete!');
+        logger.info('Database setup complete!');
         await connection.end();
     } catch (error) {
-        console.log("Make sure the MySQL server is running and the database credentials are correct");
-        console.error('Error creating a database connection:', error);
+        logger.info("Make sure the MySQL server is running and the database credentials are correct");
+        logger.error({ err: error }, 'Error creating a database connection');
         process.exit(1);
     }
 };

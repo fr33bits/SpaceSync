@@ -2,6 +2,9 @@ import express from 'express'
 import cors from 'cors'
 import mysql from 'mysql2'
 
+import { logger } from './logger.ts';
+
+// ENVIRONMENT VARIABLES
 import path from 'path';
 import dotenv from 'dotenv';
 
@@ -18,10 +21,10 @@ export const db = mysql.createConnection({
 
 db.connect(err => {
     if (err) {
-        console.error("Database connection failed: ", err.stack)
+        logger.error({error: err}, "Database connection failed")
         return
     }
-    console.log("Connected to MySQL database")
+    logger.info("Connected to MySQL database")
 })
 
 // SERVER
@@ -36,7 +39,7 @@ app.use(express.json()) // for parsing JSON
 
 // Debugging
 // app.use((req, res, next) => {
-//     console.log(`${req.method} ${req.path}`);
+//     logger.info(`${req.method} ${req.path}`);
 //     next();
 // });
 
@@ -45,7 +48,7 @@ app.use('/api', indexApi);
 
 // Start the server
 app.listen(PORT, () => {
-    console.log(
+    logger.info(
         `App started in '${process.env.NODE_ENV || "development"
         } mode' listening on port ${PORT}!`
     );

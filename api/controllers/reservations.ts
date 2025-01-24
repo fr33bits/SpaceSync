@@ -1,5 +1,6 @@
 import express from 'express'
 import mysql2 from 'mysql2';
+import { logger } from '../logger.ts';
 
 import { db } from '../app.ts'
 import { getNoticeDetails } from '../../common/notices.ts'
@@ -27,7 +28,7 @@ const reservation = (req: express.Request, res: express.Response) => {
     const { id } = req.params;
     db.query('SELECT * FROM reservations WHERE id = ?', [id], (err: mysql2.QueryError | null, result: mysql2.ResultSetHeader) => {
         if (err) {
-            console.error(err);
+            logger.error(err);
             res.status(500).json({
                 noticeCode: 'reservation-fetch-failed',
                 message: getNoticeDetails('reservation-fetch-failed', true, 'en')
@@ -58,7 +59,7 @@ const newReservation = async (req: express.Request, res: express.Response) => {
             [title, start, end],
             (err: mysql2.QueryError | null, result: mysql2.ResultSetHeader) => {
                 if (err) {
-                    console.error(err);
+                    logger.error(err);
                     res.status(500).json({
                         noticeCode: 'reservation-add-failed',
                         message: getNoticeDetails('reservation-add-failed', true, 'en')
@@ -91,7 +92,7 @@ const updateReservation = async (req: express.Request, res: express.Response) =>
             [title, start, end, id],
             (err: mysql2.QueryError | null) => {
                 if (err) {
-                    console.error(err);
+                    logger.error(err);
                     res.status(500).json({
                         noticeCode: 'reservation-update-failed',
                         message: getNoticeDetails('reservation-update-failed', true, 'en')
@@ -108,7 +109,7 @@ const deleteReservation = (req: express.Request, res: express.Response) => {
     const { id } = req.params;
     db.query('DELETE FROM reservations WHERE id = ?', [id], (err: mysql2.QueryError | null) => {
         if (err) {
-            console.error(err);
+            logger.error(err);
             res.status(500).json({
                 noticeCode: 'reservation-delete-failed',
                 message: getNoticeDetails('reservation-delete-failed', true, 'en')
@@ -140,7 +141,7 @@ const isOccupied = async (
             queryArgs,
             (err: mysql2.QueryError | null, result: mysql2.ResultSetHeader[]) => {
                 if (err) {
-                    console.error(err);
+                    logger.error(err);
                     reject("The SQL query in the function isOccupied returned an error"); // ! this message technically isn't processed further
                 } else {
                     resolve(result.length > 0); // true if there are overlapping reservations, false otherwise
