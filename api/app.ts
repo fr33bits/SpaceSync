@@ -21,7 +21,7 @@ export const db = mysql.createConnection({
 
 db.connect(err => {
     if (err) {
-        logger.error({error: err}, "Database connection failed")
+        logger.error({ error: err }, "Database connection failed")
         return
     }
     logger.info("Connected to MySQL database")
@@ -47,9 +47,11 @@ app.use(express.json()) // for parsing JSON
 app.use('/api', indexApi);
 
 // Start the server
-app.listen(PORT, () => {
-    logger.info(
-        `App started in '${process.env.NODE_ENV || "development"
-        } mode' listening on port ${PORT}!`
-    );
-});
+if (process.env.NODE_ENV !== 'test') { // this is to avoid open handles when running tests
+    app.listen(PORT, () => {
+        logger.info(
+            `App started in '${process.env.NODE_ENV || "development"
+            } mode' listening on port ${PORT}!`
+        );
+    })
+}
