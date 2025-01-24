@@ -10,7 +10,7 @@ jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 // the mock Axios responses (that axios delivers in reservations.ts) are not the same as the actual responses from the API as some data like the status, config, headers, etc. are missing but those are not relevant as to the actual output that the reservations.ts functions return
-describe('API Client Tests - Reservations', () => {
+describe('API client tests - reservations', () => {
     afterEach(() => {
         jest.clearAllMocks(); // Clear mocks between tests
     });
@@ -93,7 +93,7 @@ describe('API Client Tests - Reservations', () => {
     describe('deleteReservation', () => {
         test('should send a DELETE request and return true on confirmation', async () => {
             jest.spyOn(globalThis, 'confirm').mockReturnValueOnce(true); // Mock confirm dialog; globalThis must be used as window.confirm is not available in Node.js
-            mockedAxios.delete.mockResolvedValueOnce({"message": "Reservation deleted"});
+            mockedAxios.delete.mockResolvedValueOnce({ "message": "Reservation deleted" });
 
             const result = await deleteReservation(1);
             expect(mockedAxios.delete).toHaveBeenCalledWith(

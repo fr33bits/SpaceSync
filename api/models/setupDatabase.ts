@@ -1,17 +1,10 @@
 import * as mysql from 'mysql2/promise'; // Import all named (instead of default) exports as an object
 
-// LOADING ENVIRONMENT VARIABLES
-// merely dotenv.config({path: '../.env'}) is not enough when running 'npm start' instead of 'node app.ts' (from the 'api' directory) because it does not correctly load in enviroment variables
-import * as path from 'path';
-import * as dotenv from 'dotenv';
-import { fileURLToPath } from 'url';
+import path from 'path';
+import dotenv from 'dotenv';
 
-// Construct __dirname equivalent in ESM
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Load .env
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+// dynamically resolve the .env file path based on the current working directory
+dotenv.config({ path: path.resolve(process.cwd(), './.env') });
 
 export const setupDatabase = async () => {
     const dbConfig = {

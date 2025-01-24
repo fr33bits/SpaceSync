@@ -1,8 +1,9 @@
-import { db } from '../app.ts'
 import express from 'express'
+import mysql2 from 'mysql2';
+
+import { db } from '../app.ts'
 import { getNoticeDetails } from '../../common/notices.ts'
 import { reservationStaticValidator } from '../../common/validation.ts'
-import mysql2 from 'mysql2';
 
 // Notes on importing types:
 // !!! without 'type' running `node app.ts` throws an error: "SyntaxError: The requested module '../../common/types.ts' does not provide an export named 'Reservation'"
@@ -12,7 +13,6 @@ export const reservations = (req: express.Request, res: express.Response) => {
     db.query('SELECT * FROM reservations',
         (err: mysql2.QueryError | null, result: mysql2.ResultSetHeader) => {
             if (err) {
-                console.error(err);
                 res.status(500).json({
                     noticeCode: 'reservations-fetch-failed',
                     message: getNoticeDetails('reservations-fetch-failed', true, 'en')
@@ -119,14 +119,6 @@ const deleteReservation = (req: express.Request, res: express.Response) => {
     });
 };
 
-export default {
-    reservations,
-    reservation,
-    newReservation,
-    updateReservation,
-    deleteReservation
-}
-
 const isOccupied = async (
     room_id: number | void,
     start: number,
@@ -157,3 +149,12 @@ const isOccupied = async (
         );
     });
 };
+
+export default {
+    reservations,
+    reservation,
+    newReservation,
+    updateReservation,
+    deleteReservation,
+    isOccupied
+}
