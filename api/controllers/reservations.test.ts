@@ -3,17 +3,19 @@ import { app } from '../app.ts';
 import supertest from 'supertest';
 const request = supertest(app);
 
-test('PUT /api/reservations', async () => {
-    // running these requests requries the server to be shut down to prevent port conflict
-    // requires default database set up
+describe('API server tests - reservations', () => {
+    test('PUT /api/reservations', async () => {
+        // running these requests requries the server to be shut down to prevent port conflict
+        // requires default database set up
 
-    const updateReservation = {
-        id: 3,
-        title: "Marketinški brainstorming",
-        start: 1737112500,
-        end: 1737114600,
-    }
-    const response = await request.put('/api/reservations').send(updateReservation);
-    expect(response.status).toBe(201);
-    expect(response.body).toEqual({ message: 'Reservation updated' });
+        const updateReservation = {
+            id: 3,
+            title: "Marketinški brainstorming",
+            start: 1737112500,
+            end: 1737114600,
+        }
+        const response = await request.put('/api/reservations').send(updateReservation);
+        expect(response.status).toBe(201);
+        expect(response.body).toEqual({ message: 'Reservation updated' });
+    })
 })
