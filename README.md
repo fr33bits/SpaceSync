@@ -78,7 +78,7 @@ Alternatively, you can create the same database in MySQL Workbench using the sam
 
 ### Setting the envionment variables
 
-In this case the environment variables will be set for a product environment. Port 4000 should generally be availible but if not, you can either kill the process using it or change the port.
+In this case the environment variables will be set for a production environment. Port 4000 should generally be availible but if not, you can either kill the process using it or change the port.
 
 1. Change your working directory to the project root directory (if you're not there already)
 2. Create a new `.env` file that will hold your environment variables (e.g. run the `touch .env` command).
